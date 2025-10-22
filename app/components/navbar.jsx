@@ -1,0 +1,25 @@
+'use client';
+
+import Link from 'next/link';
+import { AppBar, Toolbar, Typography, Stack, Button } from '@mui/material';
+
+export default function Navbar() {
+  return (
+    <AppBar position="static" color="primary">
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          FitFlux
+        </Typography>
+        <Stack direction="row" spacing={2}>
+          <Button component={Link} href="/" color="inherit">Home</Button>
+          <Button component={Link} href="/dashboard" color="inherit">Dashboard</Button>
+          <Button component={Link} href="/meal" color="inherit">Meal Optimizer</Button>
+          <Button component={Link} href="/sign-in" color="inherit">Sign In</Button>
+          <Button component={Link} href="/sign-up" color="inherit" variant="outlined" sx={{ borderColor: 'white' }}>
+            Sign Up
+          </Button>
+        </Stack>
+      </Toolbar>
+    </AppBar>
+  );
+}

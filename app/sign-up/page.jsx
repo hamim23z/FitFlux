@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
+import Navbar from '../components/navbar';
 
 export default function SignUpPage() {
   // form state
@@ -109,6 +110,7 @@ export default function SignUpPage() {
   return (
     <>
       <CssBaseline enableColorScheme />
+      <Navbar />
       <Box
         component="main"
         sx={{

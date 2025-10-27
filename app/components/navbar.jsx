@@ -14,6 +14,7 @@ export default function Navbar() {
           <Button component={Link} href="/" color="inherit">Home</Button>
           <Button component={Link} href="/dashboard" color="inherit">Dashboard</Button>
           <Button component={Link} href="/meal" color="inherit">Meal Optimizer</Button>
+          <Button component={Link} href="/about-us" color="inherit">About Us</Button>
           <Button component={Link} href="/sign-in" color="inherit">Sign In</Button>
           <Button component={Link} href="/sign-up" color="inherit" variant="outlined" sx={{ borderColor: 'white' }}>
             Sign Up

@@ -14,7 +14,7 @@ describe('LandingPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('CTA has correct href to /dashboard (no click to avoid jsdom navigation)', () => {
+  it('CTA has correct href to /dashboard ', () => {
     render(<LandingPage />)
     const cta = screen.getByRole('link', { name: /get started/i })
     expect(cta).toHaveAttribute('href', '/dashboard')

@@ -103,7 +103,7 @@ describe('SignInPage', () => {
     await user.click(remember)
     expect(remember).toBeChecked()
 
-    // trigger loading
+   
     await user.type(screen.getByLabelText(/^email$/i), 'jon@example.com')
     await user.type(screen.getByLabelText(/^password$/i), 'secret1')
     await user.click(screen.getByRole('button', { name: /^sign in$/i }))

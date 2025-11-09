@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -7,21 +6,15 @@ import {
   Box,
   Card,
   Button,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-  TextField,
   Typography,
   Alert,
-  CircularProgress,
   Stack,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { GitHub } from "@mui/icons-material";
 import DiscordIcon from "../components/discord_icon";
 import Navbar from "../components/navbar";
+import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
   // form state
@@ -30,8 +23,8 @@ export default function SignInPage() {
 
   // validation state
   const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
   // ui state
@@ -62,33 +55,33 @@ export default function SignInPage() {
     return valid;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //changed this mainly. this is when a user clicks the sign in with ... button
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (!validateInputs()) return;
 
-    setIsLoading(true);
-    setFormError("");
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
-    try {
-      // TODO: replace with your real sign-in API (or Stack auth)
-      // await fetch('/api/auth/sign-in', { method: 'POST', body: JSON.stringify({ email, password }) })
-      await new Promise((r) => setTimeout(r, 900));
-      // e.g. router.push('/dashboard')
-      alert("Test/Placeholder for backend");
-    } catch (err) {
-      setFormError(err?.message || "An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
+    if (res?.error) {
+      console.error("Login error:", res.error);
+    } else {
+      window.location.href = "/";
     }
   };
 
+  //the actual sign in
   const handleOAuthSignin = async (provider) => {
     setIsLoading(true);
     setFormError("");
     try {
-      // TODO: replace with your real OAuth flow
-      await new Promise((r) => setTimeout(r, 700));
-      alert(`✅ Mock ${provider} sign in. Wire to your OAuth backend!`);
+      await signIn(provider.toLowerCase(), { callbackUrl: "/" });
     } catch (err) {
       setFormError(`Failed to sign in with ${provider}: ${err.message}`);
     } finally {

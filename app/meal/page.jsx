@@ -16,6 +16,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Navbar from '../components/navbar';
+import Footer from '../components/Footer';
 
 export default function MealOptimizer() {
   const [form, setForm] = useState({
@@ -149,6 +150,7 @@ export default function MealOptimizer() {
           )}
         </Paper>
       </Container>
+      <Footer/>
     </Box>
   );
 }

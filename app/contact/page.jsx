@@ -9,6 +9,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import Navbar from "../components/navbar";
+import Footer from '../components/Footer';
 
 export default function Contact() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -184,20 +185,7 @@ export default function Contact() {
         message="Your message has been sent. Someone from our team will reach out to you soon!"
       />
 
-      {/* Footer */}
-      <Box
-        sx={{
-          bgcolor: 'grey.900',
-          color: 'grey.300',
-          textAlign: 'center',
-          py: 3,
-          mt: 4,
-        }}
-      >
-        <Typography variant="body2">
-          © {new Date().getFullYear()} FitFlux. All rights reserved.
-        </Typography>
-      </Box>
+      <Footer/>
     </Box>
   );
 }

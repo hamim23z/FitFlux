@@ -21,6 +21,7 @@ import {
 import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
 import Navbar from '../components/navbar';
+import Footer from '../components/Footer';
 
 export default function SignInPage() {
   // form state
@@ -232,6 +233,7 @@ export default function SignInPage() {
             </Stack>
           </Card>
         </Box>
+        <Footer/>
       </Box>
     </>
   );

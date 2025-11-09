@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import Navbar from '../components/navbar';
+import Footer from '../components/Footer';
 import {
   Box,
   Container,
@@ -322,6 +323,7 @@ export default function WorkoutTracker() {
           </Paper>
         )}
       </Container>
+      <Footer/>
     </Box>
   );
 }

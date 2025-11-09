@@ -1,6 +1,7 @@
 'use client';
 
 import Navbar from './components/navbar';
+import Footer from './components/Footer';
 
 import {
   Typography,
@@ -101,18 +102,7 @@ export default function LandingPage() {
       </Container>
 
       {/* Footer */}
-      <Box
-        sx={{
-          bgcolor: 'grey.900',
-          color: 'grey.300',
-          textAlign: 'center',
-          py: 3,
-        }}
-      >
-        <Typography variant="body2">
-          © {new Date().getFullYear()} FitFlux. All rights reserved.
-        </Typography>
-      </Box>
+      <Footer />
     </Box>
   );
 }

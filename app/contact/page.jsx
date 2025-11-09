@@ -9,15 +9,16 @@ import {
   Snackbar,
 } from "@mui/material";
 import Navbar from "../components/navbar";
-import Footer from '../components/Footer';
+import {supabase} from "../lib/supabaseClient";
 
 export default function Contact() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [feedback, setFeedback] = useState("");
+  const [message, setMessage] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSnackbarClose = () => {
@@ -36,17 +37,43 @@ export default function Contact() {
   };
 
   const handleSendMessage = async () => {
-    setSnackbarOpen(true);
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setFeedback("");
+    if (!firstName || !email || !message) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (emailError) {
+      alert("Please fix the email error before submitting.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { error } = await supabase.from("contact").insert([
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          message,
+        },
+      ]);
+
+      if (error) throw error;
+      setSnackbarOpen(true);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Box>
       <Navbar />
-
       <Box
         sx={{
           minHeight: { xs: "90vh", sm: "95vh" },
@@ -75,7 +102,7 @@ export default function Contact() {
               mb: 4,
             }}
           >
-            Get in touch with us
+            get in touch with us
           </Typography>
 
           <Grid
@@ -96,8 +123,6 @@ export default function Contact() {
                   "& .MuiInputLabel-root": { color: "black" },
                   "& .MuiInputLabel-root.Mui-focused": { color: "black" },
                   "& .MuiFilledInput-input": { color: "black" },
-                  opacity: 1,
-                  color: "#111",
                 }}
                 required
               />
@@ -115,7 +140,6 @@ export default function Contact() {
                   "& .MuiInputLabel-root": { color: "black" },
                   "& .MuiInputLabel-root.Mui-focused": { color: "black" },
                   "& .MuiFilledInput-input": { color: "black" },
-                  opacity: 1,
                 }}
               />
             </Grid>
@@ -134,7 +158,6 @@ export default function Contact() {
               "& .MuiInputLabel-root": { color: "black" },
               "& .MuiInputLabel-root.Mui-focused": { color: "black" },
               "& .MuiFilledInput-input": { color: "black" },
-              opacity: 1,
             }}
             required
             type="email"
@@ -148,8 +171,8 @@ export default function Contact() {
             variant="filled"
             multiline
             rows={6}
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             sx={{
               backgroundColor: "white",
               mt: 2,
@@ -157,7 +180,6 @@ export default function Contact() {
               "& .MuiInputLabel-root": { color: "black" },
               "& .MuiInputLabel-root.Mui-focused": { color: "black" },
               "& .MuiFilledInput-input": { color: "black" },
-              opacity: 1,
             }}
             required
           />
@@ -172,8 +194,9 @@ export default function Contact() {
               py: 1.5,
             }}
             onClick={handleSendMessage}
+            disabled={loading}
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </Button>
         </Box>
       </Box>
@@ -186,6 +209,20 @@ export default function Contact() {
       />
 
       <Footer/>
+      {/* Footer */}
+      <Box
+        sx={{
+          bgcolor: "grey.900",
+          color: "grey.300",
+          textAlign: "center",
+          py: 3,
+          mt: 4,
+        }}
+      >
+        <Typography variant="body2">
+          © {new Date().getFullYear()} FitFlux. All rights reserved.
+        </Typography>
+      </Box>
     </Box>
   );
 }

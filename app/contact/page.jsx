@@ -9,7 +9,8 @@ import {
   Snackbar,
 } from "@mui/material";
 import Navbar from "../components/navbar";
-import {supabase} from "../lib/supabaseClient";
+import Footer from "../components/Footer";
+import { supabase } from "../lib/supabaseClient";
 
 export default function Contact() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -208,7 +209,7 @@ export default function Contact() {
         message="Your message has been sent. Someone from our team will reach out to you soon!"
       />
 
-      <Footer/>
+      <Footer />
       {/* Footer */}
       <Box
         sx={{

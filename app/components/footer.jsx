@@ -134,9 +134,6 @@ export default function Footer() {
               <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
                 Product
               </Typography>
-              <Link color="text.secondary" variant="body2" href="/dashboard">
-                Dashboard
-              </Link>
               <Link color="text.secondary" variant="body2" href="/meal-optimizer">
                 Meal Optimizer
               </Link>

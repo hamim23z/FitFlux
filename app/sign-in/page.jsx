@@ -15,6 +15,7 @@ import { GitHub } from "@mui/icons-material";
 import DiscordIcon from "../components/discord_icon";
 import Navbar from "../components/navbar";
 import { signIn } from "next-auth/react";
+import Footer from "../components/Footer"
 
 export default function SignInPage() {
   // form state
@@ -189,6 +190,7 @@ export default function SignInPage() {
             </Stack>
           </Card>
         </Box>
+        <Footer/>
       </Box>
     </>
   );

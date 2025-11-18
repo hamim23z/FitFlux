@@ -1,3 +1,5 @@
+//this is a test import file. this should stay bc its the most basic, just copy from csv and then import
+//we run scripts by going to the terminal and doing node scripts/import.js
 import "dotenv/config";
 import fs from "fs";
 import Papa from "papaparse";
@@ -5,7 +7,6 @@ import { supabase } from "../lib/supabaseClient.js";
 
 async function main() {
   const file = fs.readFileSync("data/All_Diets.csv", "utf8");
-
   const results = Papa.parse(file, {
     header: true,
     skipEmptyLines: true,

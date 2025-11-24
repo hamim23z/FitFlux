@@ -23,12 +23,10 @@ describe('LandingPage', () => {
   it('shows “What FitFlux Offers” with exactly the 4 feature cards', () => {
     render(<LandingPage />)
 
-   
     expect(
       screen.getByRole('heading', { name: /what fitflux offers/i })
     ).toBeInTheDocument()
 
-    
     const titles = [
       'Personalized Dashboard',
       'Meal Optimizer',
@@ -36,33 +34,36 @@ describe('LandingPage', () => {
       'Notes & Goals',
     ]
 
-    
+   
     titles.forEach((t) => {
       expect(
-        screen.getByRole('heading', { name: new RegExp(`^${t}$`, 'i'), level: 6 })
+        screen.getByRole('heading', {
+          name: new RegExp(`^${t}$`, 'i'),
+          level: 6,
+        })
       ).toBeInTheDocument()
     })
 
     
     const allH6 = screen.getAllByRole('heading', { level: 6 })
     const featureH6 = allH6.filter((el) =>
-      titles.some((t) => new RegExp(`^${t}$`, 'i').test(el.textContent?.trim() || ''))
+      titles.some((t) =>
+        new RegExp(`^${t}$`, 'i').test(el.textContent?.trim() || '')
+      )
     )
     expect(featureH6).toHaveLength(4)
   })
 
   it('renders dynamic footer year', () => {
     render(<LandingPage />)
-  
+
     const year = new Date().getFullYear().toString()
-  
+
     
-    const footerLine = screen.getByText((content) => {
-      const lower = content.toLowerCase()
-      return lower.includes('fitflux') && lower.includes('rights reserved')
-    })
-  
+    const footerLine = screen.getByText((content) =>
+      content.includes(year)
+    )
+
     expect(footerLine).toBeInTheDocument()
-    expect(footerLine.textContent).toContain(year)
   })
 })

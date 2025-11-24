@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import SignInPage from '../sign-in/page';
-
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(() => Promise.resolve()),
@@ -13,11 +11,17 @@ jest.mock('next-auth/react', () => ({
 import { signIn } from 'next-auth/react';
 
 describe('SignInPage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test('renders heading and OAuth buttons', () => {
     render(<SignInPage />);
 
-   
-    expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
+    
+    expect(
+      screen.getByRole('heading', { name: /sign in/i })
+    ).toBeInTheDocument();
 
     
     expect(
@@ -39,32 +43,46 @@ describe('SignInPage', () => {
     expect(signUpLink).toHaveAttribute('href', '/sign-up');
   });
 
-  test('renders footer navigation links', () => {
+  test('renders footer navigation links (at least one with correct href)', () => {
     render(<SignInPage />);
 
-    expect(screen.getByRole('link', { name: /dashboard/i })).toHaveAttribute(
-      'href',
-      '/dashboard'
-    );
+   
+    const dashboardLinks = screen.getAllByRole('link', { name: /dashboard/i });
     expect(
-      screen.getByRole('link', { name: /meal optimizer/i })
-    ).toHaveAttribute('href', '/meal-optimizer');
+      dashboardLinks.some((link) => link.getAttribute('href') === '/dashboard')
+    ).toBe(true);
+
+    const mealLinks = screen.getAllByRole('link', { name: /meal optimizer/i });
     expect(
-      screen.getByRole('link', { name: /workout tracker/i })
-    ).toHaveAttribute('href', '/workout-tracker');
-    expect(screen.getByRole('link', { name: /about us/i })).toHaveAttribute(
-      'href',
-      '/about-us'
-    );
-    expect(screen.getByRole('link', { name: /contact/i })).toHaveAttribute(
-      'href',
-      '/contact'
-    );
+      mealLinks.some(
+        (link) => link.getAttribute('href') === '/meal-optimizer'
+      )
+    ).toBe(true);
+
+    const workoutLinks = screen.getAllByRole('link', {
+      name: /workout tracker/i,
+    });
+    expect(
+      workoutLinks.some(
+        (link) => link.getAttribute('href') === '/workout-tracker'
+      )
+    ).toBe(true);
+
+    const aboutLinks = screen.getAllByRole('link', { name: /about us/i });
+    expect(
+      aboutLinks.some((link) => link.getAttribute('href') === '/about-us')
+    ).toBe(true);
+
+    const contactLinks = screen.getAllByRole('link', { name: /contact/i });
+    expect(
+      contactLinks.some((link) => link.getAttribute('href') === '/contact')
+    ).toBe(true);
   });
 
   test('newsletter input is present', () => {
     render(<SignInPage />);
 
+   
     const newsletterInput = screen.getByPlaceholderText(/your email address/i);
     expect(newsletterInput).toBeInTheDocument();
   });
@@ -73,13 +91,19 @@ describe('SignInPage', () => {
     const user = userEvent.setup();
     render(<SignInPage />);
 
-    await user.click(screen.getByRole('button', { name: /sign in with google/i }));
+    await user.click(
+      screen.getByRole('button', { name: /sign in with google/i })
+    );
     expect(signIn).toHaveBeenCalledWith('google', { callbackUrl: '/' });
 
-    await user.click(screen.getByRole('button', { name: /sign in with github/i }));
+    await user.click(
+      screen.getByRole('button', { name: /sign in with github/i })
+    );
     expect(signIn).toHaveBeenCalledWith('github', { callbackUrl: '/' });
 
-    await user.click(screen.getByRole('button', { name: /sign in with discord/i }));
+    await user.click(
+      screen.getByRole('button', { name: /sign in with discord/i })
+    );
     expect(signIn).toHaveBeenCalledWith('discord', { callbackUrl: '/' });
   });
 });

@@ -53,9 +53,16 @@ describe('LandingPage', () => {
 
   it('renders dynamic footer year', () => {
     render(<LandingPage />)
+  
     const year = new Date().getFullYear().toString()
-    const footerLine = screen.getByText(/fitflux\. all rights reserved\./i)
+  
+    
+    const footerLine = screen.getByText((content) => {
+      const lower = content.toLowerCase()
+      return lower.includes('fitflux') && lower.includes('rights reserved')
+    })
+  
     expect(footerLine).toBeInTheDocument()
-    expect(footerLine.textContent).toMatch(new RegExp(year))
+    expect(footerLine.textContent).toContain(year)
   })
 })

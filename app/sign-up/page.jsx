@@ -17,14 +17,11 @@ import Navbar from "../components/navbar";
 import { signIn } from "next-auth/react";
 import Footer from "../components/Footer";
 
-
 export default function SignUpPage() {
-  // form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
-  // validation state
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [nameError, setNameError] = useState(false);
@@ -32,7 +29,6 @@ export default function SignUpPage() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [nameErrorMessage, setNameErrorMessage] = useState("");
 
-  // ui state
   const [formError, setFormError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -89,14 +85,13 @@ export default function SignUpPage() {
     }
   };
 
-  //the actual sign in
   const handleOAuthSignup = async (provider) => {
     setIsLoading(true);
     setFormError("");
     try {
       await signIn(provider.toLowerCase(), { callbackUrl: "/" });
     } catch (err) {
-      setFormError(`Failed to sign in with ${provider}: ${err.message}`);
+      setFormError(`Failed to sign up with ${provider}: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -105,106 +100,111 @@ export default function SignUpPage() {
   return (
     <>
       <CssBaseline enableColorScheme />
-      <Navbar />
       <Box
-        component="main"
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           minHeight: "100vh",
-          justifyContent: "center",
-          p: { xs: 2, sm: 3 },
-          background: "radial-gradient(circle at center, #03162B, #051220)",
-          color: "#fff",
         }}
       >
+        <Navbar />
         <Box
+          component="main"
           sx={{
-            width: "100%",
-            maxWidth: 480,
-            mx: "auto",
-            my: { xs: 4, sm: 6 },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            flex: 1,
+            justifyContent: "center",
+            p: { xs: 2, sm: 3 },
+            background: "radial-gradient(circle at center, #03162B, #051220)",
+            color: "#fff",
           }}
         >
-          <Card
-            variant="outlined"
+          <Box
             sx={{
-              p: { xs: 3, sm: 4 },
-              boxShadow:
-                "hsla(220, 30%, 5%, 0.2) 0px 5px 15px, hsla(220, 25%, 10%, 0.2) 0px 15px 35px -5px",
-              borderRadius: 3,
-              bgcolor: "background.paper",
+              width: "100%",
+              maxWidth: 480,
+              mx: "auto",
+              my: { xs: 4, sm: 6 },
             }}
           >
-            <Typography
-              component="h1"
-              variant="h4"
+            <Card
+              variant="outlined"
               sx={{
-                mb: 2,
-                color: "text.primary",
-                textAlign: "center",
-                textTransform: "uppercase",
+                p: { xs: 3, sm: 4 },
+                boxShadow:
+                  "hsla(220, 30%, 5%, 0.2) 0px 5px 15px, hsla(220, 25%, 10%, 0.2) 0px 15px 35px -5px",
+                borderRadius: 3,
+                bgcolor: "background.paper",
               }}
             >
-              Sign Up
-            </Typography>
-
-            {formError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {formError}
-              </Alert>
-            )}
-
-            {/* FORM */}
-
-            {/* OAuth and footer */}
-            <Stack gap={2}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<GoogleIcon />}
-                onClick={() => handleOAuthSignup("Google")}
-                disabled={isLoading}
-                sx={{ height: 48 }}
-              >
-                Sign up with Google
-              </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<GitHub />}
-                onClick={() => handleOAuthSignup("GitHub")}
-                disabled={isLoading}
-                sx={{ height: 48 }}
-              >
-                Sign up with GitHub
-              </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<DiscordIcon />}
-                onClick={() => handleOAuthSignup("Discord")}
-                disabled={isLoading}
-                sx={{ height: 48 }}
-              >
-                Sign up with Discord
-              </Button>
-
               <Typography
-                sx={{ textAlign: "center", mt: 1, color: "text.secondary" }}
+                component="h1"
+                variant="h4"
+                sx={{
+                  mb: 2,
+                  color: "text.primary",
+                  textAlign: "center",
+                  textTransform: "uppercase",
+                }}
               >
-                Already have an account?{" "}
-                <Button component={Link} href="/sign-in" size="small">
-                  Sign in here
-                </Button>
+                Sign Up
               </Typography>
-            </Stack>
-          </Card>
+
+              {formError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {formError}
+                </Alert>
+              )}
+
+              <Stack gap={2}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<GoogleIcon />}
+                  onClick={() => handleOAuthSignup("Google")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with Google
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<GitHub />}
+                  onClick={() => handleOAuthSignup("GitHub")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with GitHub
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<DiscordIcon />}
+                  onClick={() => handleOAuthSignup("Discord")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with Discord
+                </Button>
+
+                <Typography
+                  sx={{ textAlign: "center", mt: 1, color: "text.secondary" }}
+                >
+                  Already have an account?{" "}
+                  <Button component={Link} href="/sign-in" size="small">
+                    Sign in here
+                  </Button>
+                </Typography>
+              </Stack>
+            </Card>
+          </Box>
         </Box>
-        <Footer/>
+        <Footer />
       </Box>
     </>
   );

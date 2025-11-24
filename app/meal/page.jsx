@@ -1,156 +1,119 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Grid,
-  Button,
-  Stack,
-  Chip,
-  InputAdornment,
-  Paper,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Navbar from '../components/navbar';
-import Footer from '../components/Footer';
+import { useForm } from 'react-hook-form';
+import MealOptimizerView from '../components/MealOptimizerView';
 
-export default function MealOptimizer() {
-  const [form, setForm] = useState({
-    weight: '',
-    age: '',
-    freeTime: '',
-    prepTime: '',
+export default function MealOptimizerPage() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: {
+      weight: '',
+      age: '',
+      freeTime: '',
+      prepTime: '',
+      goal: 'maintain',
+      dietPrefs: {
+        vegetarian: false,
+        vegan: false,
+        pescatarian: false,
+      },
+      restrictions: {
+        dairyFree: false,
+        glutenFree: false,
+        nutFree: false,
+      },
+    },
   });
 
-  const [ingredient, setIngredient] = useState('');
+  const [ingredientInput, setIngredientInput] = useState('');
   const [ingredients, setIngredients] = useState(['chicken', 'rice', 'broccoli']);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState(null);
 
-  const handleChange = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const goal = watch('goal');
+  const dietPrefs = watch('dietPrefs');
+  const restrictions = watch('restrictions');
+
+  const handleGoalChange = (_e, newGoal) => {
+    if (newGoal) setValue('goal', newGoal);
   };
 
   const addIngredient = () => {
-    const v = ingredient.trim();
+    const v = ingredientInput.trim().toLowerCase();
     if (!v || ingredients.includes(v)) return;
     setIngredients((prev) => [...prev, v]);
-    setIngredient('');
+    setIngredientInput('');
   };
 
   const removeIngredient = (name) => {
     setIngredients((prev) => prev.filter((i) => i !== name));
   };
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    setResult('');
-    await new Promise((r) => setTimeout(r, 1000));
-    setResult('backend placment.');
-    setLoading(false);
+  const onSubmit = async (data) => {
+    setResult(null);
+
+    await new Promise((r) => setTimeout(r, 800));
+
+    const weightNum = Number(data.weight) || 0;
+    let calories = weightNum * 14;
+    if (data.goal === 'lose') calories -= 400;
+    if (data.goal === 'gain') calories += 300;
+    calories = Math.max(1200, Math.round(calories));
+
+    const protein = Math.max(60, Math.round(weightNum * 0.8 || 80));
+    const fats = Math.round((calories * 0.25) / 9);
+    const carbs = Math.max(
+      0,
+      Math.round((calories - protein * 4 - fats * 9) / 4)
+    );
+
+    const activePrefs = Object.entries(data.dietPrefs || {})
+      .filter(([, v]) => v)
+      .map(([k]) => k.replace(/([A-Z])/g, ' $1'));
+
+    const activeRestrictions = Object.entries(data.restrictions || {})
+      .filter(([, v]) => v)
+      .map(([k]) => k.replace(/([A-Z])/g, ' $1'));
+
+    const primaryIngredient = ingredients[0] || 'chicken';
+    const sideIngredient = ingredients[1] || 'rice';
+    const veggieIngredient = ingredients[2] || 'broccoli';
+
+    setResult({
+      calories,
+      macros: { protein, carbs, fats },
+      ingredients,
+      goal: data.goal,
+      prefs: activePrefs,
+      restrictions: activeRestrictions,
+      sampleDay: {
+        breakfast: `${primaryIngredient} & ${veggieIngredient} omelette with whole grains`,
+        lunch: `${primaryIngredient} bowl with ${sideIngredient} and ${veggieIngredient}`,
+        dinner: `${primaryIngredient} stir-fry with mixed veggies`,
+      },
+    });
   };
 
   return (
-    <Box>
-      <Navbar />
-      
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Typography variant="h4" gutterBottom>
-          Meal Optimizer
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Enter your info and available ingredients to generate a customized meal plan.
-        </Typography>
-
-        <Paper sx={{ p: 3, borderRadius: 3 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={6} sm={3}>
-              <TextField
-                fullWidth
-                label="Weight"
-                type="number"
-                value={form.weight}
-                onChange={handleChange('weight')}
-                InputProps={{ endAdornment: <InputAdornment position="end">lbs</InputAdornment> }}
-              />
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <TextField
-                fullWidth
-                label="Age"
-                type="number"
-                value={form.age}
-                onChange={handleChange('age')}
-              />
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <TextField
-                fullWidth
-                label="Free Time (weekly)"
-                type="number"
-                value={form.freeTime}
-                onChange={handleChange('freeTime')}
-                InputProps={{ endAdornment: <InputAdornment position="end">hrs</InputAdornment> }}
-              />
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <TextField
-                fullWidth
-                label="Prep Time Limit"
-                type="number"
-                value={form.prepTime}
-                onChange={handleChange('prepTime')}
-                InputProps={{ endAdornment: <InputAdornment position="end">min</InputAdornment> }}
-              />
-            </Grid>
-          </Grid>
-
-       
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 3 }}>
-            <TextField
-              fullWidth
-              label="Add Ingredient"
-              value={ingredient}
-              onChange={(e) => setIngredient(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addIngredient()}
-            />
-            <Button variant="contained" startIcon={<AddIcon />} onClick={addIngredient}>
-              Add
-            </Button>
-          </Stack>
-
-          <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 2 }}>
-            {ingredients.map((i) => (
-              <Chip
-                key={i}
-                label={i}
-                onDelete={() => removeIngredient(i)}
-                deleteIcon={<DeleteIcon />}
-                sx={{ mb: 1 }}
-              />
-            ))}
-          </Stack>
-
-       
-          <Box textAlign="center" sx={{ mt: 4 }}>
-            <Button variant="contained" size="large" onClick={handleGenerate} disabled={loading}>
-              {loading ? 'Generating...' : 'Generate Meal Plan'}
-            </Button>
-          </Box>
-
-        
-          {result && (
-            <Paper variant="outlined" sx={{ mt: 3, p: 2, borderRadius: 2, bgcolor: 'grey.50' }}>
-              <Typography variant="body1">{result}</Typography>
-            </Paper>
-          )}
-        </Paper>
-      </Container>
-      <Footer/>
-    </Box>
+    <MealOptimizerView
+      onSubmit={handleSubmit(onSubmit)}
+      isSubmitting={isSubmitting}
+      register={register}
+      goal={goal}
+      dietPrefs={dietPrefs}
+      restrictions={restrictions}
+      handleGoalChange={handleGoalChange}
+      ingredientInput={ingredientInput}
+      setIngredientInput={setIngredientInput}
+      addIngredient={addIngredient}
+      removeIngredient={removeIngredient}
+      ingredients={ingredients}
+      result={result}
+    />
   );
 }

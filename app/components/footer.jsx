@@ -11,9 +11,9 @@ import Typography from "@mui/material/Typography";
 
 function Copyright() {
   return (
-    <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+    <Typography variant="body2" sx={{ color: "grey.500", mt: 1 }}>
       {"Copyright © "}
-      <Link color="text.secondary" href="/">
+      <Link color="grey.400" href="/" sx={{ '&:hover': { color: 'white' } }}>
         FitFlux
       </Link>
       &nbsp;
@@ -36,19 +36,19 @@ export default function Footer() {
   return (
     <Box
       sx={{
-        bgcolor: 'background.paper',
-        borderTop: '2px solid',
-        borderColor: 'divider',
+        bgcolor: 'grey.900',
+        color: 'white',
+        mt: 'auto',
+        width: '100%',
       }}
     >
       <Container
+        maxWidth="lg"
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           gap: { xs: 4, sm: 6 },
           py: { xs: 6, sm: 8 },
-          textAlign: { sm: "center", md: "left" },
         }}
       >
         <Box
@@ -57,7 +57,7 @@ export default function Footer() {
             flexDirection: { xs: "column", sm: "row" },
             width: "100%",
             justifyContent: "space-between",
-            gap: { xs: 4, sm: 2 },
+            gap: { xs: 4, sm: 4, md: 8 },
           }}
         >
           <Box
@@ -65,19 +65,19 @@ export default function Footer() {
               display: "flex",
               flexDirection: "column",
               gap: 2,
-              minWidth: { xs: "100%", sm: "auto" },
-              maxWidth: { sm: "400px" },
+              flex: 1,
+              maxWidth: { sm: "450px" },
             }}
           >
             <Typography
               variant="h6"
-              sx={{ fontWeight: "bold", color: "primary.main", mb: 1 }}
+              sx={{ fontWeight: "bold", color: "white", mb: 1 }}
             >
               FitFlux
             </Typography>
             <Typography
               variant="body2"
-              sx={{ color: "text.secondary", mb: 2 }}
+              sx={{ color: "grey.400", mb: 2 }}
             >
               Personalized fitness guidance that adapts to your life. Track workouts, 
               optimize meals, and achieve sustainable results.
@@ -85,11 +85,11 @@ export default function Footer() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ fontWeight: 600 }}
+              sx={{ fontWeight: 600, color: "white" }}
             >
               Join the newsletter
             </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary", mb: 1 }}>
+            <Typography variant="body2" sx={{ color: "grey.400", mb: 1 }}>
               Subscribe for weekly fitness tips and updates. No spam ever!
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1 }}>
@@ -131,16 +131,16 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5, color: "white" }}>
                 Product
               </Typography>
-              <Link color="text.secondary" variant="body2" href="/dashboard">
+              <Link color="grey.400" variant="body2" href="/dashboard" sx={{ '&:hover': { color: 'white' } }}>
                 Dashboard
               </Link>
-              <Link color="text.secondary" variant="body2" href="/meal-optimizer">
+              <Link color="grey.400" variant="body2" href="/meal-optimizer" sx={{ '&:hover': { color: 'white' } }}>
                 Meal Optimizer
               </Link>
-              <Link color="text.secondary" variant="body2" href="/workout-tracker">
+              <Link color="grey.400" variant="body2" href="/workout-tracker" sx={{ '&:hover': { color: 'white' } }}>
                 Workout Tracker
               </Link>
             </Box>
@@ -152,13 +152,13 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5, color: "white" }}>
                 Company
               </Typography>
-              <Link color="text.secondary" variant="body2" href="/about-us">
+              <Link color="grey.400" variant="body2" href="/about-us" sx={{ '&:hover': { color: 'white' } }}>
                 About Us
               </Link>
-              <Link color="text.secondary" variant="body2" href="/contact">
+              <Link color="grey.400" variant="body2" href="/contact" sx={{ '&:hover': { color: 'white' } }}>
                 Contact
               </Link>
             </Box>
@@ -170,13 +170,13 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5, color: "white" }}>
                 Legal
               </Typography>
-              <Link color="text.secondary" variant="body2" href="/terms">
+              <Link color="grey.400" variant="body2" href="/terms" sx={{ '&:hover': { color: 'white' } }}>
                 Terms
               </Link>
-              <Link color="text.secondary" variant="body2" href="/privacy">
+              <Link color="grey.400" variant="body2" href="/privacy" sx={{ '&:hover': { color: 'white' } }}>
                 Privacy
               </Link>
             </Box>
@@ -189,17 +189,17 @@ export default function Footer() {
             pt: { xs: 4, sm: 6 },
             width: "100%",
             borderTop: "1px solid",
-            borderColor: "divider",
+            borderColor: "grey.800",
           }}
         >
           <div>
-            <Link color="text.secondary" variant="body2" href="/privacy">
+            <Link color="grey.400" variant="body2" href="/privacy" sx={{ '&:hover': { color: 'white' } }}>
               Privacy Policy
             </Link>
-            <Typography sx={{ display: "inline", mx: 0.5, opacity: 0.5 }}>
+            <Typography sx={{ display: "inline", mx: 0.5, opacity: 0.5, color: "grey.500" }}>
               &nbsp;•&nbsp;
             </Typography>
-            <Link color="text.secondary" variant="body2" href="/terms">
+            <Link color="grey.400" variant="body2" href="/terms" sx={{ '&:hover': { color: 'white' } }}>
               Terms of Service
             </Link>
             <Copyright />

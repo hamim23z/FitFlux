@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import Footer from '../components/Footer';
 import {
@@ -18,17 +17,21 @@ import {
   Paper,
   IconButton,
   Divider,
+  Fab,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function WorkoutTracker() {
   const [selectedMuscle, setSelectedMuscle] = useState('');
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [workoutLog, setWorkoutLog] = useState([]);
+  const lastInputRef = useRef(null);
 
-  // Muscle groups
   const muscleGroups = [
     { name: 'Chest', color: '#e57373' },
     { name: 'Back', color: '#64b5f6' },
@@ -38,39 +41,44 @@ export default function WorkoutTracker() {
     { name: 'Core', color: '#4db6ac' },
   ];
 
-  // Sample exercises (you'll replace with real data/API later)
   const exercises = {
     Chest: [
-      { id: 1, name: 'Bench Press', videoUrl: 'https://example.com/bench-press' },
-      { id: 2, name: 'Push-ups', videoUrl: 'https://example.com/pushups' },
-      { id: 3, name: 'Dumbbell Flyes', videoUrl: 'https://example.com/flyes' },
+      { id: 1, name: 'Bench Press', videoUrl: 'https://example.com/bench-press', difficulty: 'Intermediate', equipment: ['Barbell'] },
+      { id: 2, name: 'Push-ups', videoUrl: 'https://example.com/pushups', difficulty: 'Beginner', equipment: ['Bodyweight'] },
+      { id: 3, name: 'Dumbbell Flyes', videoUrl: 'https://example.com/flyes', difficulty: 'Intermediate', equipment: ['Dumbbells'] },
     ],
     Back: [
-      { id: 4, name: 'Pull-ups', videoUrl: 'https://example.com/pullups' },
-      { id: 5, name: 'Barbell Rows', videoUrl: 'https://example.com/rows' },
-      { id: 6, name: 'Lat Pulldowns', videoUrl: 'https://example.com/lat-pulldown' },
+      { id: 4, name: 'Pull-ups', videoUrl: 'https://example.com/pullups', difficulty: 'Advanced', equipment: ['Bodyweight'] },
+      { id: 5, name: 'Barbell Rows', videoUrl: 'https://example.com/rows', difficulty: 'Intermediate', equipment: ['Barbell'] },
+      { id: 6, name: 'Lat Pulldowns', videoUrl: 'https://example.com/lat-pulldown', difficulty: 'Beginner', equipment: ['Machine'] },
     ],
     Shoulders: [
-      { id: 7, name: 'Overhead Press', videoUrl: 'https://example.com/ohp' },
-      { id: 8, name: 'Lateral Raises', videoUrl: 'https://example.com/lateral' },
-      { id: 9, name: 'Face Pulls', videoUrl: 'https://example.com/face-pulls' },
+      { id: 7, name: 'Overhead Press', videoUrl: 'https://example.com/ohp', difficulty: 'Intermediate', equipment: ['Barbell'] },
+      { id: 8, name: 'Lateral Raises', videoUrl: 'https://example.com/lateral', difficulty: 'Beginner', equipment: ['Dumbbells'] },
+      { id: 9, name: 'Face Pulls', videoUrl: 'https://example.com/face-pulls', difficulty: 'Beginner', equipment: ['Cable'] },
     ],
     Arms: [
-      { id: 10, name: 'Bicep Curls', videoUrl: 'https://example.com/curls' },
-      { id: 11, name: 'Tricep Dips', videoUrl: 'https://example.com/dips' },
-      { id: 12, name: 'Hammer Curls', videoUrl: 'https://example.com/hammer' },
+      { id: 10, name: 'Bicep Curls', videoUrl: 'https://example.com/curls', difficulty: 'Beginner', equipment: ['Dumbbells'] },
+      { id: 11, name: 'Tricep Dips', videoUrl: 'https://example.com/dips', difficulty: 'Intermediate', equipment: ['Bodyweight'] },
+      { id: 12, name: 'Hammer Curls', videoUrl: 'https://example.com/hammer', difficulty: 'Beginner', equipment: ['Dumbbells'] },
     ],
     Legs: [
-      { id: 13, name: 'Squats', videoUrl: 'https://example.com/squats' },
-      { id: 14, name: 'Deadlifts', videoUrl: 'https://example.com/deadlifts' },
-      { id: 15, name: 'Leg Press', videoUrl: 'https://example.com/leg-press' },
+      { id: 13, name: 'Squats', videoUrl: 'https://example.com/squats', difficulty: 'Intermediate', equipment: ['Barbell'] },
+      { id: 14, name: 'Deadlifts', videoUrl: 'https://example.com/deadlifts', difficulty: 'Advanced', equipment: ['Barbell'] },
+      { id: 15, name: 'Leg Press', videoUrl: 'https://example.com/leg-press', difficulty: 'Beginner', equipment: ['Machine'] },
     ],
     Core: [
-      { id: 16, name: 'Planks', videoUrl: 'https://example.com/planks' },
-      { id: 17, name: 'Crunches', videoUrl: 'https://example.com/crunches' },
-      { id: 18, name: 'Russian Twists', videoUrl: 'https://example.com/twists' },
+      { id: 16, name: 'Planks', videoUrl: 'https://example.com/planks', difficulty: 'Beginner', equipment: ['Bodyweight'] },
+      { id: 17, name: 'Crunches', videoUrl: 'https://example.com/crunches', difficulty: 'Beginner', equipment: ['Bodyweight'] },
+      { id: 18, name: 'Russian Twists', videoUrl: 'https://example.com/twists', difficulty: 'Intermediate', equipment: ['Bodyweight'] },
     ],
   };
+
+  useEffect(() => {
+    if (lastInputRef.current) {
+      lastInputRef.current.focus();
+    }
+  }, [workoutLog.length]);
 
   const addSetToLog = () => {
     if (!selectedExercise) return;
@@ -78,14 +86,30 @@ export default function WorkoutTracker() {
     const newSet = {
       id: Date.now(),
       exerciseName: selectedExercise.name,
-      sets: '',
       reps: '',
       weight: '',
     };
     setWorkoutLog([...workoutLog, newSet]);
   };
 
+  const copyPreviousSet = (exerciseName, currentSetId) => {
+    const exerciseSets = workoutLog.filter(set => set.exerciseName === exerciseName);
+    const currentIndex = exerciseSets.findIndex(set => set.id === currentSetId);
+    
+    if (currentIndex === 0) return;
+    
+    const previousSet = exerciseSets[currentIndex - 1];
+    setWorkoutLog(workoutLog.map(set => 
+      set.id === currentSetId 
+        ? { ...set, reps: previousSet.reps, weight: previousSet.weight }
+        : set
+    ));
+  };
+
   const updateSet = (id, field, value) => {
+    const numValue = parseFloat(value);
+    if (value !== '' && numValue < 0) return;
+    
     setWorkoutLog(workoutLog.map(set => 
       set.id === id ? { ...set, [field]: value } : set
     ));
@@ -95,11 +119,36 @@ export default function WorkoutTracker() {
     setWorkoutLog(workoutLog.filter(set => set.id !== id));
   };
 
+  const isBodyweightExercise = (exercise) => {
+    return exercise?.equipment?.includes('Bodyweight');
+  };
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case 'Beginner': return 'success';
+      case 'Intermediate': return 'warning';
+      case 'Advanced': return 'error';
+      default: return 'default';
+    }
+  };
+
+  const totalSets = workoutLog.length;
+  const uniqueExercises = new Set(workoutLog.map(set => set.exerciseName)).size;
+  const totalVolume = workoutLog.reduce((sum, set) => {
+    const reps = Math.abs(parseInt(set.reps) || 0);
+    const weight = Math.abs(parseInt(set.weight) || 0);
+    return sum + (reps * weight);
+  }, 0);
+  const totalReps = workoutLog.reduce((sum, set) => {
+    const reps = Math.abs(parseInt(set.reps) || 0);
+    return sum + reps;
+  }, 0);
+
   return (
     <Box>
       <Navbar />
       
-      <Container maxWidth="xl" sx={{ py: 6 }}>
+      <Container maxWidth="xl" sx={{ py: 6, pb: workoutLog.length > 0 ? 16 : 6 }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
           Workout Tracker
         </Typography>
@@ -108,9 +157,8 @@ export default function WorkoutTracker() {
         </Typography>
 
         <Grid container spacing={3}>
-          {/* Left Panel - Muscle Groups */}
           <Grid item xs={12} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 3 }}>
+            <Paper sx={{ p: 2, borderRadius: 3, position: 'sticky', top: 20 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
                 Muscle Groups
               </Typography>
@@ -142,7 +190,6 @@ export default function WorkoutTracker() {
             </Paper>
           </Grid>
 
-          {/* Middle Panel - Exercises */}
           <Grid item xs={12} md={5}>
             <Paper sx={{ p: 2, borderRadius: 3, minHeight: 400 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -158,17 +205,39 @@ export default function WorkoutTracker() {
                           cursor: 'pointer',
                           border: selectedExercise?.id === exercise.id ? '2px solid' : '1px solid',
                           borderColor: selectedExercise?.id === exercise.id ? 'primary.main' : 'divider',
+                          bgcolor: selectedExercise?.id === exercise.id ? 'primary.50' : 'background.paper',
                           '&:hover': {
                             boxShadow: 3,
+                            bgcolor: selectedExercise?.id === exercise.id ? 'primary.50' : 'grey.50',
                           },
+                          transition: 'all 0.2s',
                         }}
                         onClick={() => setSelectedExercise(exercise)}
                       >
                         <CardContent>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                              {exercise.name}
-                            </Typography>
+                            <Box>
+                              <Typography variant="body1" sx={{ fontWeight: 'medium', mb: 0.5 }}>
+                                {exercise.name}
+                              </Typography>
+                              <Stack direction="row" spacing={0.5} flexWrap="wrap">
+                                <Chip 
+                                  label={exercise.difficulty} 
+                                  size="small" 
+                                  color={getDifficultyColor(exercise.difficulty)}
+                                  sx={{ height: 20, fontSize: '0.7rem' }}
+                                />
+                                {exercise.equipment.map((eq) => (
+                                  <Chip 
+                                    key={eq}
+                                    label={eq} 
+                                    size="small" 
+                                    variant="outlined"
+                                    sx={{ height: 20, fontSize: '0.7rem' }}
+                                  />
+                                ))}
+                              </Stack>
+                            </Box>
                             <IconButton size="small" color="primary">
                               <PlayArrowIcon />
                             </IconButton>
@@ -180,7 +249,11 @@ export default function WorkoutTracker() {
                 </Grid>
               ) : (
                 <Box sx={{ textAlign: 'center', py: 8 }}>
-                  <Typography color="text.secondary">
+                  <FitnessCenterIcon sx={{ fontSize: 80, color: 'grey.300', mb: 2 }} />
+                  <Typography color="text.secondary" variant="h6" sx={{ mb: 1 }}>
+                    Get Started
+                  </Typography>
+                  <Typography color="text.secondary" variant="body2">
                     Choose a muscle group to see available exercises
                   </Typography>
                 </Box>
@@ -188,16 +261,14 @@ export default function WorkoutTracker() {
             </Paper>
           </Grid>
 
-          {/* Right Panel - Video & Tracking */}
           <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, borderRadius: 3 }}>
+            <Paper sx={{ p: 2, borderRadius: 3, position: 'sticky', top: 20 }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
                 Exercise Details
               </Typography>
               
               {selectedExercise ? (
                 <Box>
-                  {/* Video Placeholder */}
                   <Box
                     sx={{
                       width: '100%',
@@ -232,7 +303,7 @@ export default function WorkoutTracker() {
                     onClick={addSetToLog}
                     sx={{ mb: 2 }}
                   >
-                    Log Set
+                    Add Set
                   </Button>
 
                   <Divider sx={{ my: 2 }} />
@@ -241,44 +312,73 @@ export default function WorkoutTracker() {
                     Today's Sets
                   </Typography>
                   
-                  <Stack spacing={1.5}>
-                    {workoutLog
-                      .filter(set => set.exerciseName === selectedExercise.name)
-                      .map((set) => (
-                        <Paper key={set.id} variant="outlined" sx={{ p: 1.5 }}>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <TextField
-                              size="small"
-                              label="Reps"
-                              type="number"
-                              value={set.reps}
-                              onChange={(e) => updateSet(set.id, 'reps', e.target.value)}
-                              sx={{ width: 70 }}
-                            />
-                            <TextField
-                              size="small"
-                              label="Weight"
-                              type="number"
-                              value={set.weight}
-                              onChange={(e) => updateSet(set.id, 'weight', e.target.value)}
-                              sx={{ width: 80 }}
-                            />
-                            <Typography variant="caption">lbs</Typography>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => removeSet(set.id)}
-                            >
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Stack>
-                        </Paper>
-                      ))}
-                  </Stack>
+                  {workoutLog.filter(set => set.exerciseName === selectedExercise.name).length === 0 ? (
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        No sets logged yet. Click "Add Set" to start!
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Stack spacing={1.5}>
+                      {workoutLog
+                        .filter(set => set.exerciseName === selectedExercise.name)
+                        .map((set, localIndex) => (
+                          <Paper key={set.id} variant="outlined" sx={{ p: 1.5 }}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <Typography variant="caption" sx={{ minWidth: 30, fontWeight: 'bold' }}>
+                                Set {localIndex + 1}
+                              </Typography>
+                              <TextField
+                                size="small"
+                                label="Reps"
+                                type="number"
+                                value={set.reps}
+                                onChange={(e) => updateSet(set.id, 'reps', e.target.value)}
+                                inputRef={workoutLog[workoutLog.length - 1]?.id === set.id ? lastInputRef : null}
+                                inputProps={{ min: 0 }}
+                                sx={{ width: 70 }}
+                              />
+                              {!isBodyweightExercise(selectedExercise) && (
+                                <>
+                                  <TextField
+                                    size="small"
+                                    label="Weight"
+                                    type="number"
+                                    value={set.weight}
+                                    onChange={(e) => updateSet(set.id, 'weight', e.target.value)}
+                                    inputProps={{ min: 0 }}
+                                    sx={{ width: 80 }}
+                                  />
+                                  <Typography variant="caption">lbs</Typography>
+                                </>
+                              )}
+                              {localIndex > 0 && (
+                                <IconButton
+                                  size="small"
+                                  color="primary"
+                                  onClick={() => copyPreviousSet(selectedExercise.name, set.id)}
+                                  title="Copy previous set"
+                                >
+                                  <ContentCopyIcon fontSize="small" />
+                                </IconButton>
+                              )}
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => removeSet(set.id)}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Stack>
+                          </Paper>
+                        ))}
+                    </Stack>
+                  )}
                 </Box>
               ) : (
                 <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <Typography color="text.secondary">
+                  <CheckCircleIcon sx={{ fontSize: 60, color: 'grey.300', mb: 2 }} />
+                  <Typography color="text.secondary" variant="body2">
                     Select an exercise to view details and log sets
                   </Typography>
                 </Box>
@@ -286,44 +386,76 @@ export default function WorkoutTracker() {
             </Paper>
           </Grid>
         </Grid>
-
-        {/* Workout Summary */}
-        {workoutLog.length > 0 && (
-          <Paper sx={{ p: 3, borderRadius: 3, mt: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Workout Summary
-            </Typography>
-            <Grid container spacing={2}>
-              {Object.entries(
-                workoutLog.reduce((acc, set) => {
-                  if (!acc[set.exerciseName]) acc[set.exerciseName] = [];
-                  acc[set.exerciseName].push(set);
-                  return acc;
-                }, {})
-              ).map(([exerciseName, sets]) => (
-                <Grid item xs={12} sm={6} md={4} key={exerciseName}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                        {exerciseName}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {sets.length} set{sets.length > 1 ? 's' : ''} completed
-                      </Typography>
-                      {sets.map((set, idx) => (
-                        <Typography key={set.id} variant="caption" display="block">
-                          Set {idx + 1}: {set.reps || '?'} reps @ {set.weight || '?'} lbs
-                        </Typography>
-                      ))}
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Paper>
-        )}
       </Container>
-      <Footer/>
+
+      {workoutLog.length > 0 && (
+        <Paper
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            p: 2,
+            bgcolor: 'background.paper',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
+            zIndex: 1000,
+          }}
+        >
+          <Container maxWidth="xl">
+            <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
+              <Stack direction="row" spacing={3}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Total Sets
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {totalSets}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Exercises
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {uniqueExercises}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Total Reps
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {totalReps}
+                  </Typography>
+                </Box>
+                {totalVolume > 0 && (
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Total Volume
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                      {totalVolume.toLocaleString()} lbs
+                    </Typography>
+                  </Box>
+                )}
+              </Stack>
+              <Button
+                variant="contained"
+                color="success"
+                size="large"
+                startIcon={<CheckCircleIcon />}
+                onClick={() => alert('Workout saved! (Connect to backend)')}
+              >
+                Finish Workout
+              </Button>
+            </Stack>
+          </Container>
+        </Paper>
+      )}
+
+      <Footer />
     </Box>
   );
 }

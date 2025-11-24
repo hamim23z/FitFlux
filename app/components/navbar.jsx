@@ -14,7 +14,6 @@ export default function Navbar() {
         <Stack direction="row" spacing={2}>
           <Button component={Link} href="/dashboard" color="inherit">Dashboard</Button>
           <Button component={Link} href="/meal" color="inherit">Meal Optimizer</Button>
-
           <Button component={Link} href="/workout-planner" color="inherit">Workout Tracker</Button>
           <Button component={Link} href="/about-us" color="inherit">About Us</Button>
           <Button component={Link} href="/contact" color="inherit">Contact</Button>

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,6 +7,8 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { Snackbar } from "@mui/material";
+import { supabase } from "../lib/supabaseClient";
 
 function Copyright() {
   return (
@@ -24,21 +25,45 @@ function Copyright() {
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+  };
 
   const handleSubscribe = async () => {
-    if (!email) return;
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from("newsletter")
+        .insert([{ email_address: email }]);
 
-    // TODO: Connect to backend newsletter API
-    alert("Thanks for subscribing!");
-    setEmail("");
+      if (error) throw error;
+
+      setSnackbarOpen(true);
+      setEmail("");
+    } catch (error) {
+      console.error("Error subscribing:", error.message);
+      setEmailError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Box
       sx={{
-        bgcolor: 'background.paper',
-        borderTop: '2px solid',
-        borderColor: 'divider',
+        bgcolor: "background.paper",
+        borderTop: "2px solid",
+        borderColor: "divider",
       }}
     >
       <Container
@@ -75,33 +100,32 @@ export default function Footer() {
             >
               FitFlux
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: "text.secondary", mb: 2 }}
-            >
-              Personalized fitness guidance that adapts to your life. Track workouts, 
-              optimize meals, and achieve sustainable results.
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
+              Personalized fitness guidance that adapts to your life. Track
+              workouts, optimize meals, and achieve sustainable results.
             </Typography>
-            <Typography
-              variant="body2"
-              gutterBottom
-              sx={{ fontWeight: 600 }}
-            >
+            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>
               Join the newsletter
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", mb: 1 }}>
               Subscribe for weekly fitness tips and updates. No spam ever!
             </Typography>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1 }}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1}
+              sx={{ mt: 1 }}
+            >
               <TextField
                 id="email-newsletter"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 size="small"
                 variant="outlined"
                 fullWidth
                 placeholder="Your email address"
                 sx={{ maxWidth: { sm: "250px" } }}
+                error={Boolean(emailError)}
+                helperText={emailError}
               />
               <Button
                 onClick={handleSubscribe}
@@ -114,6 +138,13 @@ export default function Footer() {
               </Button>
             </Stack>
           </Box>
+
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={2500}
+            onClose={handleSnackbarClose}
+            message="Subscribed successfully!"
+          />
 
           <Box
             sx={{
@@ -131,16 +162,24 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "medium", mb: 0.5 }}
+              >
                 Product
               </Typography>
-              <Link color="text.secondary" variant="body2" href="/dashboard">
-                Dashboard
-              </Link>
-              <Link color="text.secondary" variant="body2" href="/meal-optimizer">
+              <Link
+                color="text.secondary"
+                variant="body2"
+                href="/meal-optimizer"
+              >
                 Meal Optimizer
               </Link>
-              <Link color="text.secondary" variant="body2" href="/workout-tracker">
+              <Link
+                color="text.secondary"
+                variant="body2"
+                href="/workout-tracker"
+              >
                 Workout Tracker
               </Link>
             </Box>
@@ -152,7 +191,10 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "medium", mb: 0.5 }}
+              >
                 Company
               </Typography>
               <Link color="text.secondary" variant="body2" href="/about-us">
@@ -170,7 +212,10 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "medium", mb: 0.5 }}
+              >
                 Legal
               </Typography>
               <Link color="text.secondary" variant="body2" href="/terms">

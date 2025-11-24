@@ -1,13 +1,16 @@
-'use client';
-import Link from 'next/link';
-import { AppBar, Toolbar, Typography, Stack, Button } from '@mui/material';
+"use client";
+import Link from "next/link";
+import { AppBar, Toolbar, Typography, Stack, Button } from "@mui/material";
 
 export default function Navbar() {
   return (
     <AppBar position="static" color="primary">
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', cursor: 'pointer' }}>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", cursor: "pointer" }}
+          >
             FitFlux
           </Typography>
         </Link>
@@ -26,4 +29,3 @@ export default function Navbar() {
     </AppBar>
   );
 }
-

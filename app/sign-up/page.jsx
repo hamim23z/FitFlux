@@ -1,9 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-"use client";
-import { useState } from "react";
-import Link from "next/link";
 import {
   CssBaseline,
   Box,
@@ -88,14 +85,13 @@ export default function SignUpPage() {
     }
   };
 
-  //the actual sign in
   const handleOAuthSignup = async (provider) => {
     setIsLoading(true);
     setFormError("");
     try {
       await signIn(provider.toLowerCase(), { callbackUrl: "/" });
     } catch (err) {
-      setFormError(`Failed to sign in with ${provider}: ${err.message}`);
+      setFormError(`Failed to sign up with ${provider}: ${err.message}`);
     } finally {
       setIsLoading(false);
     }

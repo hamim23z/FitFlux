@@ -34,7 +34,7 @@ import {
             and what FitFlux is adjusting for you this week.
           </Typography>
   
-          {/* Top summary cards */}
+          
           <Grid container spacing={3}>
             <Grid item xs={12} md={3}>
               <Card sx={{ borderRadius: 3, height: '100%' }}>
@@ -148,7 +148,7 @@ import {
             </Grid>
           </Grid>
   
-          {/* Today’s workout + nutrition */}
+          
           <Grid container spacing={3} sx={{ mt: 3 }}>
             <Grid item xs={12} md={7}>
               <Card sx={{ borderRadius: 3, height: '100%' }}>

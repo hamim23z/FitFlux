@@ -9,7 +9,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import Navbar from "../components/navbar";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Contact() {

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Contact() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);

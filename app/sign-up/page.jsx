@@ -114,7 +114,7 @@ export default function SignUpPage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            flex: 1,
+            height: "100vh",
             justifyContent: "center",
             p: { xs: 2, sm: 3 },
             background: "radial-gradient(circle at center, #03162B, #051220)",
@@ -126,7 +126,7 @@ export default function SignUpPage() {
               width: "100%",
               maxWidth: 480,
               mx: "auto",
-              my: { xs: 4, sm: 6 },
+              my: { xs: 2, sm: 3 },
             }}
           >
             <Card

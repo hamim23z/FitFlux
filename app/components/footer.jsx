@@ -194,14 +194,14 @@ export default function Footer() {
               <Link
                 color="text.secondary"
                 variant="body2"
-                href="/meal-optimizer"
+                href="/meal"
               >
                 Meal Optimizer
               </Link>
               <Link
                 color="text.secondary"
                 variant="body2"
-                href="/workout-tracker"
+                href="/workout-planner"
               >
                 Workout Tracker
               </Link>

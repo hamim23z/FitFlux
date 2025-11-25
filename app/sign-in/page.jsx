@@ -15,7 +15,7 @@ import { GitHub } from "@mui/icons-material";
 import DiscordIcon from "../components/discord_icon";
 import Navbar from "../components/navbar";
 import { signIn } from "next-auth/react";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");

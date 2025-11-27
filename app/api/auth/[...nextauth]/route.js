@@ -31,7 +31,7 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ baseUrl }) {
-      return `${baseUrl}/workout-planner`;
+      return `${baseUrl}/dashboard`;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

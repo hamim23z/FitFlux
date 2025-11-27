@@ -12,10 +12,10 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // If the user is signed in and on the home page, redirect to meal planner
+  // If the user is signed in and on the home page, redirect to dashboard
   useEffect(() => {
     if (isAuthenticated && pathname === '/') {
-      router.replace('/meal');
+      router.replace('/dashboard');
     }
   }, [isAuthenticated, pathname, router]);
 

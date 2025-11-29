@@ -13,7 +13,6 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import { GitHub } from "@mui/icons-material";
 import DiscordIcon from "../components/discord_icon";
-import Navbar from "../components/navbar";
 import { signIn } from "next-auth/react";
 import Footer from "../components/Footer";
 
@@ -95,7 +94,6 @@ export default function SignInPage() {
           minHeight: "100vh",
         }}
       >
-        <Navbar />
         <Box
           component="main"
           sx={{

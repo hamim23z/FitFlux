@@ -1,5 +1,4 @@
 'use client';
-
 import {
   Box,
   Container,
@@ -42,8 +41,6 @@ export default function MealOptimizerView({
 }) {
   return (
     <Box sx={{ bgcolor: 'grey.100', minHeight: '100vh' }}>
-      <Navbar />
-
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Box
           sx={{

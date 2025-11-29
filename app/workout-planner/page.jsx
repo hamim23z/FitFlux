@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import {
   Box,
@@ -153,7 +152,6 @@ export default function WorkoutTracker() {
 
   return (
     <Box>
-      <Navbar />
       <Container
         maxWidth="xl"
         sx={{ py: 6, pb: workoutLog.length > 0 ? 16 : 6 }}

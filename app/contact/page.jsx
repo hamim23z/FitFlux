@@ -8,7 +8,6 @@ import {
   TextField,
   Snackbar,
 } from "@mui/material";
-import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -74,7 +73,6 @@ export default function Contact() {
 
   return (
     <Box>
-      <Navbar />
       <Box
         sx={{
           minHeight: { xs: "90vh", sm: "95vh" },

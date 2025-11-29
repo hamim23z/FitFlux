@@ -13,9 +13,6 @@ import {
   Divider,
   ToggleButton,
   ToggleButtonGroup,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
   Card,
   CardContent,
 } from "@mui/material";
@@ -28,8 +25,6 @@ export default function MealOptimizerView({
   isSubmitting,
   register,
   goal,
-  dietPrefs,
-  restrictions,
   handleGoalChange,
   ingredientInput,
   setIngredientInput,
@@ -118,9 +113,12 @@ export default function MealOptimizerView({
 
                 <Divider sx={{ my: 4 }} />
 
-                <Grid container spacing={3}>
+                <Grid container spacing={3} sx={{ justifyContent: "center" }}>
                   <Grid item xs={12} md={6}>
-                    <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ mb: 1, fontWeight: 600, textAlign: "center" }}
+                    >
                       Goal
                     </Typography>
                     <ToggleButtonGroup
@@ -134,77 +132,6 @@ export default function MealOptimizerView({
                       <ToggleButton value="maintain">Maintain</ToggleButton>
                       <ToggleButton value="gain">Build Muscle</ToggleButton>
                     </ToggleButtonGroup>
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
-                      Dietary Style
-                    </Typography>
-                    <FormGroup row>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={dietPrefs?.vegetarian || false}
-                            {...register("dietPrefs.vegetarian")}
-                          />
-                        }
-                        label="Vegetarian"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={dietPrefs?.vegan || false}
-                            {...register("dietPrefs.vegan")}
-                          />
-                        }
-                        label="Vegan"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={dietPrefs?.pescatarian || false}
-                            {...register("dietPrefs.pescatarian")}
-                          />
-                        }
-                        label="Pescatarian"
-                      />
-                    </FormGroup>
-
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ mt: 2, mb: 1, fontWeight: 600 }}
-                    >
-                      Restrictions
-                    </Typography>
-                    <FormGroup row>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={restrictions?.dairyFree || false}
-                            {...register("restrictions.dairyFree")}
-                          />
-                        }
-                        label="Dairy-free"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={restrictions?.glutenFree || false}
-                            {...register("restrictions.glutenFree")}
-                          />
-                        }
-                        label="Gluten-free"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={restrictions?.nutFree || false}
-                            {...register("restrictions.nutFree")}
-                          />
-                        }
-                        label="Nut-free"
-                      />
-                    </FormGroup>
                   </Grid>
                 </Grid>
 
@@ -356,7 +283,7 @@ export default function MealOptimizerView({
                       Sample Day of Meals:
                     </Typography>
 
-                    {["Breakfast", "Lunch", "Dinner"].map((mealKey) => {
+                    {["breakfast", "lunch", "dinner"].map((mealKey) => {
                       const meal = result?.meals?.[mealKey];
                       if (!meal) return null;
                       return (

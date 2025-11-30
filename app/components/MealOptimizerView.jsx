@@ -32,6 +32,7 @@ export default function MealOptimizerView({
   removeIngredient,
   ingredients,
   result,
+  nutrition,
 }) {
   return (
     <Box sx={{ bgcolor: "grey.100", minHeight: "100vh" }}>
@@ -45,7 +46,7 @@ export default function MealOptimizerView({
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} justifyContent="center" alignItems="center">
           <Grid item xs={12} md={7}>
             <Paper
               sx={{
@@ -63,6 +64,7 @@ export default function MealOptimizerView({
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={3}>
                     <TextField
+                      required
                       fullWidth
                       label="Weight"
                       type="number"
@@ -72,18 +74,22 @@ export default function MealOptimizerView({
                           <InputAdornment position="end">lbs</InputAdornment>
                         ),
                       }}
+                      helperText="Enter your weight in lbs"
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <TextField
+                      required
                       fullWidth
                       label="Age"
                       type="number"
                       {...register("age")}
+                      helperText="Enter your age"
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <TextField
+                      required
                       fullWidth
                       label="Height"
                       type="number"
@@ -128,9 +134,9 @@ export default function MealOptimizerView({
                       size="small"
                       color="primary"
                     >
-                      <ToggleButton value="lose">Lose Weight</ToggleButton>
-                      <ToggleButton value="maintain">Maintain</ToggleButton>
-                      <ToggleButton value="gain">Build Muscle</ToggleButton>
+                      <ToggleButton value="Lose">Lose Weight</ToggleButton>
+                      <ToggleButton value="Maintain">Maintain</ToggleButton>
+                      <ToggleButton value="Gain">Build Muscle</ToggleButton>
                     </ToggleButtonGroup>
                   </Grid>
                 </Grid>
@@ -155,6 +161,7 @@ export default function MealOptimizerView({
                 >
                   <TextField
                     fullWidth
+                    required
                     label="Add Ingredient"
                     placeholder="e.g. chicken breast, oats, spinach"
                     value={ingredientInput}
@@ -197,143 +204,195 @@ export default function MealOptimizerView({
               </form>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={5}>
-            <Card
-              sx={{
-                borderRadius: 4,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: 4,
-              }}
-            >
-              <Box
+
+          {/**main component for plan preview and the meal details */}
+          <Grid
+            container
+            spacing={4}
+            justifyContent="center"
+            alignContent="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} md={5}>
+              <Card
                 sx={{
-                  p: 3,
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
+                  borderRadius: 4,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: 4,
                 }}
               >
-                <Typography variant="h5" fontWeight={700}>
-                  Plan Preview
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  Personalized plan based on your inputs
-                </Typography>
-              </Box>
+                <Box
+                  sx={{
+                    p: 3,
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                  }}
+                >
+                  <Typography variant="h5" fontWeight={700}>
+                    Plan Preview
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    Personalized plan based on your inputs
+                  </Typography>
+                </Box>
 
-              <CardContent sx={{ flexGrow: 1 }}>
-                {result ? (
-                  <>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          Daily Calories
-                        </Typography>
-                        <Typography variant="h5" fontWeight={700}>
-                          {result?.calories ?? 0} kcal
-                        </Typography>
+                <CardContent sx={{ flexGrow: 1 }}>
+                  {result ? (
+                    <>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={4}>
+                          <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                          >
+                            Daily Calories
+                          </Typography>
+                          <Typography variant="h5" fontWeight={700}>
+                            {result.calories ?? 0} kcal
+                          </Typography>
+                        </Grid>
+
+                        <Grid item xs={12} sm={8}>
+                          <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                          >
+                            Macros (approx.)
+                          </Typography>
+                          <Typography variant="body1">
+                            Protein:{" "}
+                            <strong>{result.macros?.protein ?? 0} g</strong> |
+                            Carbs:{" "}
+                            <strong>{result.macros?.carbs ?? 0} g</strong> |
+                            Fats: <strong>{result.macros?.fats ?? 0} g</strong>
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 0.5 }}
+                          >
+                            Goal: <strong>{result.goal ?? "—"}</strong>
+                          </Typography>
+                        </Grid>
                       </Grid>
 
-                      <Grid item xs={12} sm={8}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          Macros (approx.)
-                        </Typography>
-                        <Typography variant="body1">
-                          Protein:{" "}
-                          <strong>{result?.macros?.protein ?? 0} g</strong>
-                          &nbsp;|&nbsp; Carbs:{" "}
-                          <strong>{result?.macros?.carbs ?? 0} g</strong>
-                          &nbsp;|&nbsp; Fats:{" "}
-                          <strong>{result?.macros?.fats ?? 0} g</strong>
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mt: 0.5 }}
-                        >
-                          Goal: <strong>{result?.goal ?? "—"}</strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                      <Divider sx={{ my: 2 }} />
 
-                    {(result?.prefs?.length > 0 ||
-                      result?.restrictions?.length > 0) && (
-                      <Box sx={{ mt: 2 }}>
-                        {result?.prefs?.length > 0 && (
-                          <Typography variant="body2" sx={{ mb: 0.5 }}>
-                            Dietary style:{" "}
-                            <strong>{result.prefs.join(", ")}</strong>
-                          </Typography>
-                        )}
-                        {result?.restrictions?.length > 0 && (
-                          <Typography variant="body2">
-                            Restrictions:{" "}
-                            <strong>{result.restrictions.join(", ")}</strong>
-                          </Typography>
-                        )}
-                      </Box>
-                    )}
-                    <Divider sx={{ my: 2 }} />
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
-                    >
-                      Sample Day of Meals:
+                      <Typography
+                        variant="subtitle2"
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                      >
+                        Sample Day of Meals:
+                      </Typography>
+
+                      {["breakfast", "lunch", "dinner"].map((mealKey) => {
+                        const meal = result?.meals?.[mealKey];
+                        if (!meal) return null;
+                        return (
+                          <Box key={mealKey} sx={{ mb: 2 }}>
+                            <Typography variant="body2">
+                              <strong>
+                                {mealKey.charAt(0).toUpperCase() +
+                                  mealKey.slice(1)}
+                                :
+                              </strong>{" "}
+                              {meal.recipe_name ?? "—"}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      Fill out your info on the left and click "Generate Meal
+                      Plan".
                     </Typography>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
 
-                    {["breakfast", "lunch", "dinner"].map((mealKey) => {
-                      const meal = result?.meals?.[mealKey];
-                      if (!meal) return null;
-                      return (
-                        <Box key={mealKey} sx={{ mb: 2 }}>
-                          <Typography variant="body2">
-                            <strong>
+            {/**the new meail details card */}
+            <Grid item xs={12} md={5}>
+              <Card
+                sx={{
+                  borderRadius: 4,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: 4,
+                  overflowY: "auto",
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 3,
+                    bgcolor: "secondary.main",
+                    color: "secondary.contrastText",
+                  }}
+                >
+                  <Typography variant="h5" fontWeight={700}>
+                    Meal Details
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    Ingredients, recipe, and nutrients for each meal
+                  </Typography>
+                </Box>
+
+                <CardContent sx={{ flexGrow: 1 }}>
+                  {result ? (
+                    <>
+                      {["breakfast", "lunch", "dinner"].map((mealKey) => {
+                        const meal = result?.meals?.[mealKey];
+                        if (!meal) return null;
+
+                        console.log(meal);
+                        return (
+                          <Box key={mealKey} sx={{ mb: 3 }}>
+                            <Typography variant="h6">
                               {mealKey.charAt(0).toUpperCase() +
                                 mealKey.slice(1)}
-                              :
-                            </strong>{" "}
-                            {meal.recipe_name ?? meal.name ?? "—"}
-                          </Typography>
-                          {meal.img_src && (
-                            <img
-                              src={meal.img_src}
-                              alt={meal.recipe_name ?? meal.name ?? "meal"}
-                              style={{
-                                width: "100%",
-                                borderRadius: 8,
-                                marginTop: 8,
-                              }}
-                            />
-                          )}
-                        </Box>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textAlign: "center",
-                      py: 6,
-                    }}
-                  >
-                    <Typography variant="h6" sx={{ mb: 1 }}>
-                      No plan yet
-                    </Typography>
+                            </Typography>
+
+                            <Typography variant="subtitle2" sx={{ mt: 1 }}>
+                              Ingredients:
+                            </Typography>
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                              {meal.ingredients || "No ingredients available"}
+                            </Typography>
+
+                            <Typography variant="subtitle2">
+                              Instructions:
+                            </Typography>
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                              {meal.instructions || "No instructions available"}
+                            </Typography>
+
+                            <Typography variant="subtitle2">
+                              Nutrients (approx.):
+                            </Typography>
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                              All Nutrition:{" "}
+                              {meal.nutrition?.slice(0, 600) + "." ||
+                                "No nutrition info"}
+                            </Typography>
+
+                            <Divider sx={{ mt: 2 }} />
+                          </Box>
+                        );
+                      })}
+                    </>
+                  ) : (
                     <Typography variant="body2" color="text.secondary">
-                      Fill out your info on the left and click{" "}
-                      <strong>Generate Meal Plan</strong>.
+                      No meal details available yet.
                     </Typography>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
       </Container>

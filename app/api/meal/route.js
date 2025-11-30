@@ -9,7 +9,15 @@ const supabase = createClient(
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { weight, height, age, goal, ingredients = [], dietPrefs = {}, restrictions = {} } = body;
+    const {
+      weight,
+      height,
+      age,
+      goal,
+      ingredients = [],
+      dietPrefs = {},
+      restrictions = {},
+    } = body;
 
     //CALORIE CALCULATOR FROM GOOGLE
     const weightKg = Number(weight) / 2.205 || 70;
@@ -22,7 +30,10 @@ export async function POST(req) {
     calories = Math.max(1200, Math.round(calories));
     const protein = Math.max(60, Math.round(weightKg * 1.5));
     const fats = Math.round((calories * 0.25) / 9);
-    const carbs = Math.max(0, Math.round((calories - protein * 4 - fats * 9) / 4));
+    const carbs = Math.max(
+      0,
+      Math.round((calories - protein * 4 - fats * 9) / 4)
+    );
 
     const { data: recipes, error } = await supabase
       .from("food_catalog")
@@ -30,7 +41,10 @@ export async function POST(req) {
       .limit(300);
     if (error) {
       console.error("Supabase error:", error);
-      return NextResponse.json({ error: "Database fetch failed" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Database fetch failed" },
+        { status: 500 }
+      );
     }
     if (!recipes || recipes.length === 0) {
       return NextResponse.json({ error: "No recipes found" });
@@ -42,7 +56,8 @@ export async function POST(req) {
       return userIngredients.some((ing) => recipeIngredients.includes(ing));
     });
     const finalList = filtered.length > 0 ? filtered : recipes;
-    const randomRecipe = (list) => list[Math.floor(Math.random() * list.length)];
+    const randomRecipe = (list) =>
+      list[Math.floor(Math.random() * list.length)];
     const breakfast = randomRecipe(finalList);
     const lunch = randomRecipe(finalList);
     const dinner = randomRecipe(finalList);
@@ -52,7 +67,7 @@ export async function POST(req) {
       ingredients: meal.ingredients || "",
       instructions: meal.instructions || "",
       url: meal.url || "",
-      img_src: meal.img_src || "",
+      nutrition: meal.nutrition || "Nutrition not listed for this recipe",
     });
 
     //DO NOT DELETE, NEED THIS FOR DEBUGGING
@@ -69,8 +84,12 @@ export async function POST(req) {
       calories,
       macros: { protein, carbs, fats },
       goal,
-      prefs: Object.entries(dietPrefs).filter(([, v]) => v).map(([k]) => k),
-      restrictions: Object.entries(restrictions).filter(([, v]) => v).map(([k]) => k),
+      prefs: Object.entries(dietPrefs)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
+      restrictions: Object.entries(restrictions)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
       meals: {
         breakfast: formatMeal(breakfast),
         lunch: formatMeal(lunch),

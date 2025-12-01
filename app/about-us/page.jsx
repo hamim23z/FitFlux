@@ -34,9 +34,6 @@ export default function AboutUsPage() {
 
   return (
     <Box>
-      {/* Shared Navbar */}
-      <Navbar />
-
       {/* Hero Section */}
       <Box
         sx={{

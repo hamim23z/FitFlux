@@ -74,7 +74,6 @@ export default function Contact() {
 
   return (
     <Box>
-      <Navbar />
       <Box
         sx={{
           minHeight: { xs: "90vh", sm: "95vh" },
@@ -210,20 +209,6 @@ export default function Contact() {
       />
 
       <Footer />
-      {/* Footer */}
-      <Box
-        sx={{
-          bgcolor: "grey.900",
-          color: "grey.300",
-          textAlign: "center",
-          py: 3,
-          mt: 4,
-        }}
-      >
-        <Typography variant="body2">
-          © {new Date().getFullYear()} FitFlux. All rights reserved.
-        </Typography>
-      </Box>
     </Box>
   );
 }

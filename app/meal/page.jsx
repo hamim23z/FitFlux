@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import MealOptimizerView from '../components/MealOptimizerView';
@@ -15,7 +14,7 @@ export default function MealOptimizerPage() {
     defaultValues: {
       weight: '',
       age: '',
-      freeTime: '',
+      height: '',
       prepTime: '',
       goal: 'maintain',
       dietPrefs: {
@@ -34,11 +33,9 @@ export default function MealOptimizerPage() {
   const [ingredientInput, setIngredientInput] = useState('');
   const [ingredients, setIngredients] = useState(['chicken', 'rice', 'broccoli']);
   const [result, setResult] = useState(null);
-
   const goal = watch('goal');
   const dietPrefs = watch('dietPrefs');
   const restrictions = watch('restrictions');
-
   const handleGoalChange = (_e, newGoal) => {
     if (newGoal) setValue('goal', newGoal);
   };
@@ -57,46 +54,32 @@ export default function MealOptimizerPage() {
   const onSubmit = async (data) => {
     setResult(null);
 
-    await new Promise((r) => setTimeout(r, 800));
+    try {
+      const res = await fetch('/api/meal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          weight: data.weight,
+          height: data.height,
+          age: data.age,
+          goal: data.goal,
+          ingredients,
+          dietPrefs: data.dietPrefs,
+          restrictions: data.restrictions,
+        }),
+      });
+      const json = await res.json();
 
-    const weightNum = Number(data.weight) || 0;
-    let calories = weightNum * 14;
-    if (data.goal === 'lose') calories -= 400;
-    if (data.goal === 'gain') calories += 300;
-    calories = Math.max(1200, Math.round(calories));
-
-    const protein = Math.max(60, Math.round(weightNum * 0.8 || 80));
-    const fats = Math.round((calories * 0.25) / 9);
-    const carbs = Math.max(
-      0,
-      Math.round((calories - protein * 4 - fats * 9) / 4)
-    );
-
-    const activePrefs = Object.entries(data.dietPrefs || {})
-      .filter(([, v]) => v)
-      .map(([k]) => k.replace(/([A-Z])/g, ' $1'));
-
-    const activeRestrictions = Object.entries(data.restrictions || {})
-      .filter(([, v]) => v)
-      .map(([k]) => k.replace(/([A-Z])/g, ' $1'));
-
-    const primaryIngredient = ingredients[0] || 'chicken';
-    const sideIngredient = ingredients[1] || 'rice';
-    const veggieIngredient = ingredients[2] || 'broccoli';
-
-    setResult({
-      calories,
-      macros: { protein, carbs, fats },
-      ingredients,
-      goal: data.goal,
-      prefs: activePrefs,
-      restrictions: activeRestrictions,
-      sampleDay: {
-        breakfast: `${primaryIngredient} & ${veggieIngredient} omelette with whole grains`,
-        lunch: `${primaryIngredient} bowl with ${sideIngredient} and ${veggieIngredient}`,
-        dinner: `${primaryIngredient} stir-fry with mixed veggies`,
-      },
-    });
+      if (json.error) {
+        console.error('API returned error:', json.error);
+        setResult(null);
+        return;
+      }
+      setResult(json);
+    } catch (err) {
+      console.error('Request failed:', err);
+      setResult(null);
+    }
   };
 
   return (

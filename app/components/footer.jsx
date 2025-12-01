@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -185,17 +184,13 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
-                Product
-              </Typography>
-              <Link color="text.secondary" variant="body2" href="/dashboard">
-                Dashboard
-              </Link>
-              <Link
-                color="text.secondary"
+              <Typography
                 variant="body2"
                 href="/meal"
               >
+                Product
+              </Typography>
+              <Link color="text.secondary" variant="body2" href="/meal">
                 Meal Optimizer
               </Link>
               <Link
@@ -215,7 +210,10 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "medium", mb: 0.5 }}
+              >
                 Company
               </Typography>
               <Link color="text.secondary" variant="body2" href="/about-us">
@@ -234,7 +232,10 @@ export default function Footer() {
                 minWidth: "120px",
               }}
             >
-              <Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: "medium", mb: 0.5 }}
+              >
                 Legal
               </Typography>
               <Link color="text.secondary" variant="body2" href="/terms">

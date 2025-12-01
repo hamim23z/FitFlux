@@ -1,27 +1,17 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
+import ExerciseList from "../components/ExerciseList";
+import ExerciseDetails from "../components/ExerciseDetails";
 import {
   Box,
   Container,
   Typography,
-  Grid,
-  Card,
-  CardContent,
   Button,
-  TextField,
   Stack,
-  Chip,
   Paper,
-  IconButton,
-  Divider,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export default function WorkoutTracker() {
@@ -30,7 +20,6 @@ export default function WorkoutTracker() {
   const [workoutLog, setWorkoutLog] = useState([]);
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(true);
-  const lastInputRef = useRef(null);
 
   const muscleGroups = [
     { name: "Chest", color: "#e57373" },
@@ -74,10 +63,6 @@ export default function WorkoutTracker() {
     }
     fetchExercises();
   }, []);
-
-  useEffect(() => {
-    if (lastInputRef.current) lastInputRef.current.focus();
-  }, [workoutLog.length]);
 
   const addSetToLog = () => {
     if (!selectedExercise) return;
@@ -123,21 +108,6 @@ export default function WorkoutTracker() {
     setWorkoutLog(workoutLog.filter((set) => set.id !== id));
   };
 
-  const isBodyweightExercise = (exercise) =>
-    exercise?.equipment?.includes("Bodyweight");
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case "Beginner":
-        return "success";
-      case "Intermediate":
-        return "warning";
-      case "Advanced":
-        return "error";
-      default:
-        return "default";
-    }
-  };
   const totalSets = workoutLog.length;
   const uniqueExercises = new Set(workoutLog.map((set) => set.exerciseName))
     .size;
@@ -163,304 +133,79 @@ export default function WorkoutTracker() {
           Select a muscle group, choose exercises, and track your sets and reps.
         </Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-                Muscle Groups
-              </Typography>
-              <Stack spacing={1}>
-                {muscleGroups.map((muscle) => (
-                  <Button
-                    key={muscle.name}
-                    variant={
-                      selectedMuscle === muscle.name ? "contained" : "outlined"
-                    }
-                    fullWidth
-                    sx={{
-                      justifyContent: "flex-start",
-                      textTransform: "none",
-                      borderColor: muscle.color,
-                      color:
-                        selectedMuscle === muscle.name ? "#fff" : muscle.color,
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "220px 1fr 380px",
+            },
+            gap: 3,
+          }}
+        >
+          {/* Muscle Groups Sidebar */}
+          <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+              Muscle Groups
+            </Typography>
+            <Stack spacing={1}>
+              {muscleGroups.map((muscle) => (
+                <Button
+                  key={muscle.name}
+                  variant={
+                    selectedMuscle === muscle.name ? "contained" : "outlined"
+                  }
+                  fullWidth
+                  sx={{
+                    justifyContent: "flex-start",
+                    textTransform: "none",
+                    borderColor: muscle.color,
+                    color:
+                      selectedMuscle === muscle.name ? "#fff" : muscle.color,
+                    bgcolor:
+                      selectedMuscle === muscle.name
+                        ? muscle.color
+                        : "transparent",
+                    "&:hover": {
                       bgcolor:
                         selectedMuscle === muscle.name
                           ? muscle.color
-                          : "transparent",
-                      "&:hover": {
-                        bgcolor:
-                          selectedMuscle === muscle.name
-                            ? muscle.color
-                            : `${muscle.color}20`,
-                      },
-                    }}
-                    onClick={() => {
-                      setSelectedMuscle(muscle.name);
-                      setSelectedExercise(null);
-                    }}
-                  >
-                    {muscle.name}
-                  </Button>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
+                          : `${muscle.color}20`,
+                    },
+                  }}
+                  onClick={() => {
+                    setSelectedMuscle(muscle.name);
+                    setSelectedExercise(null);
+                  }}
+                >
+                  {muscle.name}
+                </Button>
+              ))}
+            </Stack>
+          </Paper>
 
-          <Grid item xs={12} md={5}>
-            <Paper sx={{ p: 2, borderRadius: 3, minHeight: 400 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-                {selectedMuscle
-                  ? `${selectedMuscle} Exercises`
-                  : "Select a Muscle Group"}
-              </Typography>
+          {/* Exercise List */}
+          <ExerciseList
+            selectedMuscle={selectedMuscle}
+            exercises={exercises}
+            loading={loading}
+            selectedExercise={selectedExercise}
+            onSelectExercise={setSelectedExercise}
+          />
 
-              {loading ? (
-                <Typography>Loading exercises...</Typography>
-              ) : selectedMuscle && exercises[selectedMuscle]?.length > 0 ? (
-                <Grid container spacing={2}>
-                  {exercises[selectedMuscle].map((exercise) => (
-                    <Grid item xs={12} key={exercise.id}>
-                      <Card
-                        sx={{
-                          cursor: "pointer",
-                          border:
-                            selectedExercise?.id === exercise.id
-                              ? "2px solid"
-                              : "1px solid",
-                          borderColor:
-                            selectedExercise?.id === exercise.id
-                              ? "primary.main"
-                              : "divider",
-                          bgcolor:
-                            selectedExercise?.id === exercise.id
-                              ? "primary.50"
-                              : "background.paper",
-                          "&:hover": {
-                            boxShadow: 3,
-                            bgcolor:
-                              selectedExercise?.id === exercise.id
-                                ? "primary.50"
-                                : "grey.50",
-                          },
-                          transition: "all 0.2s",
-                        }}
-                        onClick={() => setSelectedExercise(exercise)}
-                      >
-                        <CardContent>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Box>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontWeight: "medium", mb: 0.5 }}
-                              >
-                                {exercise.name}
-                              </Typography>
-                              <Stack
-                                direction="row"
-                                spacing={0.5}
-                                flexWrap="wrap"
-                              >
-                                <Chip
-                                  label={exercise.level}
-                                  size="small"
-                                  color={getDifficultyColor(exercise.level)}
-                                  sx={{ height: 20, fontSize: "0.7rem" }}
-                                />
-                                {exercise.equipment.map((eq) => (
-                                  <Chip
-                                    key={eq}
-                                    label={eq}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{ height: 20, fontSize: "0.7rem" }}
-                                  />
-                                ))}
-                              </Stack>
-                            </Box>
-                            <IconButton size="small" color="primary">
-                              <PlayArrowIcon />
-                            </IconButton>
-                          </Stack>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              ) : (
-                <Box sx={{ textAlign: "center", py: 8 }}>
-                  <FitnessCenterIcon
-                    sx={{ fontSize: 80, color: "grey.300", mb: 2 }}
-                  />
-                  <Typography
-                    color="text.secondary"
-                    variant="h6"
-                    sx={{ mb: 1 }}
-                  >
-                    Get Started
-                  </Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    Choose a muscle group to see available exercises
-                  </Typography>
-                </Box>
-              )}
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-                Exercise Details
-              </Typography>
-              {selectedExercise ? (
-                <Box>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 1, fontWeight: "bold" }}
-                  >
-                    {selectedExercise.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
-                  >
-                    {selectedExercise.desc}
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    startIcon={<AddIcon />}
-                    onClick={addSetToLog}
-                    sx={{ mb: 2 }}
-                  >
-                    Add Set
-                  </Button>
-
-                  <Divider sx={{ my: 2 }} />
-
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ mb: 1, fontWeight: "bold" }}
-                  >
-                    Today's Sets
-                  </Typography>
-
-                  {workoutLog.filter(
-                    (set) => set.exerciseName === selectedExercise.name
-                  ).length === 0 ? (
-                    <Box sx={{ textAlign: "center", py: 3 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        No sets logged yet. Click "Add Set" to start!
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Stack spacing={1.5}>
-                      {workoutLog
-                        .filter(
-                          (set) => set.exerciseName === selectedExercise.name
-                        )
-                        .map((set, localIndex) => (
-                          <Paper
-                            key={set.id}
-                            variant="outlined"
-                            sx={{ p: 1.5 }}
-                          >
-                            <Stack
-                              direction="row"
-                              spacing={1}
-                              alignItems="center"
-                            >
-                              <Typography
-                                variant="caption"
-                                sx={{ minWidth: 30, fontWeight: "bold" }}
-                              >
-                                Set {localIndex + 1}
-                              </Typography>
-                              <TextField
-                                size="small"
-                                label="Reps"
-                                type="number"
-                                value={set.reps}
-                                onChange={(e) =>
-                                  updateSet(set.id, "reps", e.target.value)
-                                }
-                                inputRef={
-                                  workoutLog[workoutLog.length - 1]?.id ===
-                                  set.id
-                                    ? lastInputRef
-                                    : null
-                                }
-                                inputProps={{ min: 0 }}
-                                sx={{ width: 70 }}
-                              />
-                              {!isBodyweightExercise(selectedExercise) && (
-                                <>
-                                  <TextField
-                                    size="small"
-                                    label="Weight"
-                                    type="number"
-                                    value={set.weight}
-                                    onChange={(e) =>
-                                      updateSet(
-                                        set.id,
-                                        "weight",
-                                        e.target.value
-                                      )
-                                    }
-                                    inputProps={{ min: 0 }}
-                                    sx={{ width: 80 }}
-                                  />
-                                  <Typography variant="caption">lbs</Typography>
-                                </>
-                              )}
-                              {localIndex > 0 && (
-                                <IconButton
-                                  size="small"
-                                  color="primary"
-                                  onClick={() =>
-                                    copyPreviousSet(
-                                      selectedExercise.name,
-                                      set.id
-                                    )
-                                  }
-                                  title="Copy previous set"
-                                >
-                                  <ContentCopyIcon fontSize="small" />
-                                </IconButton>
-                              )}
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => removeSet(set.id)}
-                              >
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            </Stack>
-                          </Paper>
-                        ))}
-                    </Stack>
-                  )}
-                </Box>
-              ) : (
-                <Box sx={{ textAlign: "center", py: 4 }}>
-                  <CheckCircleIcon
-                    sx={{ fontSize: 60, color: "grey.300", mb: 2 }}
-                  />
-                  <Typography color="text.secondary" variant="body2">
-                    Select an exercise to view details and log sets
-                  </Typography>
-                </Box>
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
+          {/* Exercise Details */}
+          <ExerciseDetails
+            selectedExercise={selectedExercise}
+            workoutLog={workoutLog}
+            onAddSet={addSetToLog}
+            onUpdateSet={updateSet}
+            onRemoveSet={removeSet}
+            onCopyPreviousSet={copyPreviousSet}
+          />
+        </Box>
       </Container>
 
+      {/* Workout Summary Bar */}
       {workoutLog.length > 0 && (
         <Paper
           sx={{

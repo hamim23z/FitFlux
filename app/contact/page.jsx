@@ -8,7 +8,8 @@ import {
   TextField,
   Snackbar,
 } from "@mui/material";
-import Footer from "../components/Footer";
+import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Contact() {

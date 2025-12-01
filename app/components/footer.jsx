@@ -186,7 +186,7 @@ export default function Footer() {
             >
               <Typography
                 variant="body2"
-                sx={{ fontWeight: "medium", mb: 0.5 }}
+                href="/meal"
               >
                 Product
               </Typography>

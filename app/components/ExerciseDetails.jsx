@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -14,6 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import DialogCard from "./DialogComponent";
 
 export default function ExerciseDetails({
   selectedExercise,
@@ -35,6 +36,13 @@ export default function ExerciseDetails({
   const exerciseSets = selectedExercise
     ? workoutLog.filter((set) => set.exerciseName === selectedExercise.name)
     : [];
+
+  console.log(selectedExercise);
+
+  //for the dialog when users click the video button
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
@@ -62,12 +70,19 @@ export default function ExerciseDetails({
             <Button
               variant="outlined"
               startIcon={<PlayArrowIcon />}
-              onClick={() => alert("Video feature coming soon!")}
+              onClick={handleOpen}
               sx={{ minWidth: 120 }}
             >
               Video
             </Button>
           </Stack>
+
+          {/**for the dialog when people click video */}
+          <DialogCard
+            open={open}
+            handleClose={handleClose}
+            data={selectedExercise}
+          />
 
           <Divider sx={{ my: 2 }} />
 

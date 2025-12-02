@@ -161,7 +161,6 @@ export default function MealOptimizerView({
                 >
                   <TextField
                     fullWidth
-                    required
                     label="Add Ingredient"
                     placeholder="e.g. chicken breast, oats, spinach"
                     value={ingredientInput}

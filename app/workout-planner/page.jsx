@@ -48,7 +48,7 @@ export default function WorkoutTracker() {
         const muscle = ex.muscle_group || "Other";
         if (!grouped[muscle]) grouped[muscle] = [];
         grouped[muscle].push({
-          id: ex.exercise_name,
+          id: ex.id,
           name: ex.exercise_name,
           desc: ex.desc,
           force: ex.force,

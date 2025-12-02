@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Footer from "./Footer";
+import Footer from "../footer";
 
 export default function MealOptimizerView({
   onSubmit,

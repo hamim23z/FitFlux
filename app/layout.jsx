@@ -1,25 +1,21 @@
-'use client';
-
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import './globals.css';
+import MuiThemeProvider from './MuiThemeProvider';
+import { Inter } from 'next/font/google';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: { main: '#1976d2' },
-    background: { default: '#f7f7f9' },
-  },
-  shape: { borderRadius: 12 },
-});
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'FitFlux',
+  description: 'Personalized fitness platform',
+};
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+        <MuiThemeProvider>
           {children}
-        </ThemeProvider>
+        </MuiThemeProvider>
       </body>
     </html>
   );

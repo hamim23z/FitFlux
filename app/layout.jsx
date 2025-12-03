@@ -1,5 +1,7 @@
 import './globals.css';
 import MuiThemeProvider from './MuiThemeProvider';
+import Providers from './providers';
+import Navbar from './components/navbar';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -14,7 +16,10 @@ export default function RootLayout({ children }) {
     <html lang="en" className={inter.className}>
       <body>
         <MuiThemeProvider>
-          {children}
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
         </MuiThemeProvider>
       </body>
     </html>

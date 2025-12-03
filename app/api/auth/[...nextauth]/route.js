@@ -2,19 +2,13 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import DiscordProvider from "next-auth/providers/discord";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      authorization: {
-        params: {
-          prompt: "select_account",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
     GithubProvider({
       clientId: process.env.GITHUB_ID,
@@ -31,10 +25,28 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ baseUrl }) {
-      return `${baseUrl}/workout-planner`;
+      return `${baseUrl}/`;
+    },
+  },
+
+  events: {
+    async signIn({ user, account }) {
+      await supabaseAdmin.from("users").upsert(
+        {
+          provider: account.provider,
+          provider_account_id: account.providerAccountId,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          updated_at: new Date(),
+        },
+        {
+          onConflict: "provider_account_id",
+        }
+      );
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
-
+};
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

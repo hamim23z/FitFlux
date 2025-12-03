@@ -9,7 +9,8 @@ import {
   Snackbar,
 } from "@mui/material";
 import Navbar from "../components/navbar";
-import {supabase} from "../lib/supabaseClient";
+import Footer from "../components/footer";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Contact() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -73,7 +74,6 @@ export default function Contact() {
 
   return (
     <Box>
-      <Navbar />
       <Box
         sx={{
           minHeight: { xs: "90vh", sm: "95vh" },
@@ -208,21 +208,7 @@ export default function Contact() {
         message="Your message has been sent. Someone from our team will reach out to you soon!"
       />
 
-      <Footer/>
-      {/* Footer */}
-      <Box
-        sx={{
-          bgcolor: "grey.900",
-          color: "grey.300",
-          textAlign: "center",
-          py: 3,
-          mt: 4,
-        }}
-      >
-        <Typography variant="body2">
-          © {new Date().getFullYear()} FitFlux. All rights reserved.
-        </Typography>
-      </Box>
+      <Footer />
     </Box>
   );
 }

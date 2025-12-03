@@ -1,7 +1,5 @@
 'use client';
-
 import { useState } from 'react';
-import Navbar from '../components/navbar';
 import Footer from '../components/Footer';
 import DashboardView from '../components/DashboardView';
 
@@ -35,7 +33,6 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Navbar />
       <DashboardView
         summary={summary}
         todayWorkout={todayWorkout}

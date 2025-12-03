@@ -1,7 +1,7 @@
 'use client';
 
 import Navbar from '../components/navbar';
-import Footer from '../components/Footer';
+import Footer from '../components/footer';
 
 import {
   Typography,
@@ -34,9 +34,6 @@ export default function AboutUsPage() {
 
   return (
     <Box>
-      {/* Shared Navbar */}
-      <Navbar />
-
       {/* Hero Section */}
       <Box
         sx={{

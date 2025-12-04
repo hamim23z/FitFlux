@@ -1,6 +1,6 @@
 "use client";
 import Providers from "./providers";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import "./globals.css";
 

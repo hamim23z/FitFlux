@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import Footer from "../components/footer";
+import Footer from "../components/Footer";
 import ExerciseList from "../components/ExerciseList";
 import ExerciseDetails from "../components/ExerciseDetails";
 import {

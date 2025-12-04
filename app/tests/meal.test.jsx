@@ -8,7 +8,7 @@ import MealOptimizer from '../meal/page.jsx';
 // import MealOptimizer from '../MealOptimizer.jsx';
 
 // mock navbar/footer so they don't break tests
-jest.mock('../components/navbar', () => {
+jest.mock('../components/Navbar', () => {
     const React = require('react');
     return () => React.createElement('div', { 'data-testid': 'navbar' });
 });

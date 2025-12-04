@@ -1,0 +1,209 @@
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import {
+  CssBaseline,
+  Box,
+  Card,
+  Button,
+  Typography,
+  Alert,
+  Stack,
+} from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
+import { GitHub } from "@mui/icons-material";
+import DiscordIcon from "../components/discord_icon";
+import { signIn } from "next-auth/react";
+import Footer from "../components/footer";
+
+export default function SignUpPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
+
+  const [formError, setFormError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateInputs = () => {
+    let valid = true;
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setEmailError(true);
+      setEmailErrorMessage("Please enter a valid email address.");
+      valid = false;
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
+    }
+
+    if (!password || password.length < 6) {
+      setPasswordError(true);
+      setPasswordErrorMessage("Password must be at least 6 characters long.");
+      valid = false;
+    } else {
+      setPasswordError(false);
+      setPasswordErrorMessage("");
+    }
+
+    if (!name || name.trim().length === 0) {
+      setNameError(true);
+      setNameErrorMessage("Name is required.");
+      valid = false;
+    } else {
+      setNameError(false);
+      setNameErrorMessage("");
+    }
+
+    return valid;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateInputs()) return;
+
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (res?.error) {
+      console.error("Login error:", res.error);
+    } else {
+      window.location.href = "/";
+    }
+  };
+
+  const handleOAuthSignup = async (provider) => {
+    setIsLoading(true);
+    setFormError("");
+    try {
+      await signIn(provider.toLowerCase(), { callbackUrl: "/" });
+    } catch (err) {
+      setFormError(`Failed to sign up with ${provider}: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <CssBaseline enableColorScheme />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
+        <Box
+          component="main"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            height: "100vh",
+            justifyContent: "center",
+            p: { xs: 2, sm: 3 },
+            background: "radial-gradient(circle at center, #03162B, #051220)",
+            color: "#fff",
+          }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 480,
+              mx: "auto",
+              my: { xs: 2, sm: 3 },
+            }}
+          >
+            <Card
+              variant="outlined"
+              sx={{
+                p: { xs: 3, sm: 4 },
+                boxShadow:
+                  "hsla(220, 30%, 5%, 0.2) 0px 5px 15px, hsla(220, 25%, 10%, 0.2) 0px 15px 35px -5px",
+                borderRadius: 3,
+                bgcolor: "background.paper",
+              }}
+            >
+              <Typography
+                component="h1"
+                variant="h4"
+                sx={{
+                  mb: 2,
+                  color: "text.primary",
+                  textAlign: "center",
+                  textTransform: "uppercase",
+                }}
+              >
+                Sign Up
+              </Typography>
+
+              {formError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {formError}
+                </Alert>
+              )}
+
+              <Stack gap={2}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<GoogleIcon />}
+                  onClick={() => handleOAuthSignup("Google")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with Google
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<GitHub />}
+                  onClick={() => handleOAuthSignup("GitHub")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with GitHub
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<DiscordIcon />}
+                  onClick={() => handleOAuthSignup("Discord")}
+                  disabled={isLoading}
+                  sx={{ height: 48 }}
+                >
+                  Sign up with Discord
+                </Button>
+
+                <Typography
+                  sx={{ textAlign: "center", mt: 1, color: "text.secondary" }}
+                >
+                  Already have an account?{" "}
+                  <Button component={Link} href="/sign-in" size="small">
+                    Sign in here
+                  </Button>
+                </Typography>
+              </Stack>
+            </Card>
+          </Box>
+        </Box>
+        <Footer />
+      </Box>
+    </>
+  );
+}

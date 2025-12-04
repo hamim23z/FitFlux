@@ -208,7 +208,7 @@ export default function Contact() {
         message="Your message has been sent. Someone from our team will reach out to you soon!"
       />
 
-      <Footer />
+      <Footer/>
     </Box>
   );
 }

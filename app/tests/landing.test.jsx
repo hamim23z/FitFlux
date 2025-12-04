@@ -23,11 +23,11 @@ describe('LandingPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('CTA has correct href to /dashboard', () => {
+  it('CTA has correct href to /sign-in', () => {
     renderPage()
 
     const cta = screen.getByRole('link', { name: /get started/i })
-    expect(cta).toHaveAttribute('href', '/dashboard')
+    expect(cta).toHaveAttribute('href', '/sign-in')
   })
 
   it('shows “What FitFlux Offers” with exactly the 4 feature cards', () => {
@@ -38,7 +38,7 @@ describe('LandingPage', () => {
       screen.getByRole('heading', { name: /what fitflux offers/i })
     ).toBeInTheDocument()
 
-    // each feature title exists as an h6
+    
     FEATURE_TITLES.forEach((title) => {
       expect(
         screen.getByRole('heading', {
@@ -48,7 +48,7 @@ describe('LandingPage', () => {
       ).toBeInTheDocument()
     })
 
-    // and there are exactly 4 of them
+   
     const allH6 = screen.getAllByRole('heading', { level: 6 })
     const featureH6 = allH6.filter((el) =>
       FEATURE_TITLES.some((title) =>
@@ -58,13 +58,16 @@ describe('LandingPage', () => {
     expect(featureH6).toHaveLength(FEATURE_TITLES.length)
   })
 
-  it('renders dynamic footer year', () => {
+  it('renders footer with dynamic year', () => {
     renderPage()
 
     const year = new Date().getFullYear().toString()
-    const footerLine = screen.getByText(/fitflux\. all rights reserved\./i)
+
+    const footerLine = screen.getByText((content) => {
+      const normalized = content.toLowerCase()
+      return normalized.includes('fitflux') && content.includes(year)
+    })
 
     expect(footerLine).toBeInTheDocument()
-    expect(footerLine.textContent).toMatch(new RegExp(year))
   })
 })

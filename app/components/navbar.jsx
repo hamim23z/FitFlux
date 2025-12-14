@@ -93,7 +93,7 @@ export default function Navbar() {
                 </MenuItem>
                 <MenuItem
                   component={Link}
-                  href="/settings"
+                  href="/user-settings"
                   onClick={handleMenuClose}
                 >
                   Settings

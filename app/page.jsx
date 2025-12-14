@@ -1,6 +1,5 @@
 "use client";
-
-import Footer from "./components/footer";
+import Footer from "./components/Footer";
 import {
   Typography,
   Box,
@@ -210,7 +209,7 @@ export default function LandingPage() {
                 variant="contained"
                 size="large"
                 component={Link}
-                href="/sign-in"
+                href="/sign-up"
                 sx={{
                   bgcolor: "white",
                   color: "#1565c0",
@@ -319,7 +318,7 @@ export default function LandingPage() {
             variant="contained"
             size="large"
             component={Link}
-            href="/sign-in"
+            href="/sign-up"
             sx={{
               bgcolor: "white",
               color: "#1565c0",

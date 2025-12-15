@@ -67,3 +67,5 @@ export default function DialogCard({ open, handleClose, data }) {
     </Dialog>
   );
 }
+
+

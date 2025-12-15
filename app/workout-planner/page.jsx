@@ -1,9 +1,11 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import Footer from "../components/Footer";
 import ExerciseList from "../components/ExerciseList";
 import ExerciseDetails from "../components/ExerciseDetails";
+import AISuggestions from "../components/AISuggestions";
 import {
   Box,
   Container,
@@ -13,6 +15,7 @@ import {
   Paper,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 export default function WorkoutTracker() {
   const [selectedMuscle, setSelectedMuscle] = useState("");
@@ -20,6 +23,7 @@ export default function WorkoutTracker() {
   const [workoutLog, setWorkoutLog] = useState([]);
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(true);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
 
   const muscleGroups = [
     { name: "Chest", color: "#e57373" },
@@ -27,6 +31,7 @@ export default function WorkoutTracker() {
     { name: "Shoulders", color: "#81c784" },
     { name: "Arms", color: "#ffb74d" },
     { name: "Legs", color: "#ba68c8" },
+    { name: "Core", color: "#4db6ac" },
     { name: "Hips", color: "#2042a1ff" },
   ];
 
@@ -142,11 +147,30 @@ export default function WorkoutTracker() {
             gap: 3,
           }}
         >
-          {/* Muscle Groups Sidebar */}
           <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
               Muscle Groups
             </Typography>
+            
+            {/* AI Suggestions Button */}
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<AutoAwesomeIcon />}
+              onClick={() => setAiDialogOpen(true)}
+              sx={{
+                mb: 2,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                textTransform: "none",
+                fontWeight: "bold",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                },
+              }}
+            >
+              AI Suggestions
+            </Button>
+
             <Stack spacing={1}>
               {muscleGroups.map((muscle) => (
                 <Button
@@ -203,6 +227,12 @@ export default function WorkoutTracker() {
           />
         </Box>
       </Container>
+
+      <AISuggestions
+        open={aiDialogOpen}
+        onClose={() => setAiDialogOpen(false)}
+        muscleGroups={muscleGroups.map(m => m.name)}
+      />
 
       {/* Workout Summary Bar */}
       {workoutLog.length > 0 && (

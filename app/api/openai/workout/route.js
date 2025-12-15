@@ -59,7 +59,6 @@ OUTPUT SHAPE:
       },
     });
 
-
     const jsonText =
       response.output?.[0]?.content?.[0]?.text?.value ??
       response.output_text; 
@@ -83,7 +82,34 @@ OUTPUT SHAPE:
       );
     }
 
-    return NextResponse.json({ plan });
+
+    const totalExercises = plan.workouts?.reduce(
+      (sum, w) => sum + (w.exercises?.length || 0),
+      0
+    ) || 0;
+
+    const totalSets = plan.workouts?.reduce(
+      (sum, w) =>
+        sum +
+        (w.exercises?.reduce(
+          (s, e) => s + (parseInt(e.sets) || 0),
+          0
+        ) || 0),
+      0
+    ) || 0;
+
+    return NextResponse.json({
+      plan,
+      meta: {
+        experience,
+        goal,
+        muscleGroups: Array.isArray(muscleGroups) ? muscleGroups : [muscleGroups],
+        equipment,
+        totalExercises,
+        totalSets,
+        generatedAt: new Date().toISOString(),
+      },
+    });
   } catch (error) {
     console.error("Workout AI Error:", error);
     return NextResponse.json(

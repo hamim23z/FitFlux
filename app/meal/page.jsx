@@ -1,7 +1,7 @@
-'use client';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import MealOptimizerView from '../components/MealOptimizerView';
+"use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import MealOptimizerView from "../components/MealOptimizerView";
 
 export default function MealOptimizerPage() {
   const {
@@ -12,73 +12,78 @@ export default function MealOptimizerPage() {
     formState: { isSubmitting },
   } = useForm({
     defaultValues: {
-      weight: '',
-      age: '',
-      height: '',
-      prepTime: '',
-      goal: 'maintain',
-      dietPrefs: {
-        vegetarian: false,
-        vegan: false,
-        pescatarian: false,
-      },
-      restrictions: {
-        dairyFree: false,
-        glutenFree: false,
-        nutFree: false,
-      },
+      weight: "",
+      age: "",
+      height: "",
+      prepTime: "",
+      gender: "male",
+      goal: "maintain",
     },
   });
 
-  const [ingredientInput, setIngredientInput] = useState('');
-  const [ingredients, setIngredients] = useState(['chicken', 'rice', 'broccoli']);
-  const [result, setResult] = useState(null);
-  const goal = watch('goal');
-  const dietPrefs = watch('dietPrefs');
-  const restrictions = watch('restrictions');
+  const [ingredientInput, setIngredientInput] = useState("");
+  const [ingredients, setIngredients] = useState([
+    "chicken",
+    "rice",
+    "broccoli",
+  ]);
+
+  // ✅ this will store the OpenAI plan shape: { summary, estimated_total_calories, meals: [...] }
+  const [plan, setPlan] = useState(null);
+
+  // ✅ show route validation errors nicely
+  const [apiErrors, setApiErrors] = useState([]);
+
+  const goal = watch("goal");
+
   const handleGoalChange = (_e, newGoal) => {
-    if (newGoal) setValue('goal', newGoal);
+    if (newGoal) setValue("goal", newGoal);
   };
 
   const addIngredient = () => {
     const v = ingredientInput.trim().toLowerCase();
     if (!v || ingredients.includes(v)) return;
     setIngredients((prev) => [...prev, v]);
-    setIngredientInput('');
+    setIngredientInput("");
   };
 
   const removeIngredient = (name) => {
     setIngredients((prev) => prev.filter((i) => i !== name));
   };
 
+  // ✅ Calls the OpenAI route: /api/openai/meal
   const onSubmit = async (data) => {
-    setResult(null);
+    setPlan(null);
+    setApiErrors([]);
 
     try {
-      const res = await fetch('/api/meal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/openai/meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          weight: data.weight,
-          height: data.height,
+          // ✅ match your openai/meal/route.js expected keys
+          weightLbs: data.weight,
           age: data.age,
-          goal: data.goal,
+          heightCm: data.height,
+          gender: data.gender,
+          prepTimeMinutes: data.prepTime,
           ingredients,
-          dietPrefs: data.dietPrefs,
-          restrictions: data.restrictions,
         }),
       });
+
       const json = await res.json();
 
-      if (json.error) {
-        console.error('API returned error:', json.error);
-        setResult(null);
+      // your OpenAI route returns { errors } on 400
+      if (!res.ok) {
+        setApiErrors(json?.errors || [json?.error || "Request failed"]);
         return;
       }
-      setResult(json);
+
+      // your OpenAI route returns { plan }
+      setPlan(json.plan);
     } catch (err) {
-      console.error('Request failed:', err);
-      setResult(null);
+      console.error("Request failed:", err);
+      setApiErrors([String(err?.message || err)]);
     }
   };
 
@@ -88,15 +93,14 @@ export default function MealOptimizerPage() {
       isSubmitting={isSubmitting}
       register={register}
       goal={goal}
-      dietPrefs={dietPrefs}
-      restrictions={restrictions}
       handleGoalChange={handleGoalChange}
       ingredientInput={ingredientInput}
       setIngredientInput={setIngredientInput}
       addIngredient={addIngredient}
       removeIngredient={removeIngredient}
       ingredients={ingredients}
-      result={result}
+      plan={plan}
+      apiErrors={apiErrors}
     />
   );
 }

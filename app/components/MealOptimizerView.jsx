@@ -1,3 +1,4 @@
+
 "use client";
 import {
   Box,
@@ -35,6 +36,7 @@ export default function MealOptimizerView({
   ingredients,
   plan,
   apiErrors = [],
+  onSave,
 }) {
   return (
     <Box sx={{ bgcolor: "grey.100", minHeight: "100vh" }}>
@@ -49,7 +51,6 @@ export default function MealOptimizerView({
         </Box>
 
         <Grid container spacing={4} justifyContent="center" alignItems="flex-start">
-          {/* LEFT: FORM */}
           <Grid item xs={12} md={7}>
             <Paper
               sx={{
@@ -193,7 +194,11 @@ export default function MealOptimizerView({
                       }
                     }}
                   />
-                  <Button variant="contained" startIcon={<AddIcon />} onClick={addIngredient}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={addIngredient}
+                  >
                     Add
                   </Button>
                 </Stack>
@@ -238,10 +243,8 @@ export default function MealOptimizerView({
             </Paper>
           </Grid>
 
-          {/* RIGHT SIDE: PREVIEW + DETAILS */}
           <Grid item xs={12} md={5}>
             <Stack spacing={4}>
-              {/* PREVIEW */}
               <Card
                 sx={{
                   borderRadius: 4,
@@ -292,6 +295,15 @@ export default function MealOptimizerView({
                           </Typography>
                         </Box>
                       ))}
+
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 2, borderRadius: 999 }}
+                        onClick={onSave}
+                      >
+                        Save to Dashboard
+                      </Button>
                     </>
                   ) : (
                     <Typography variant="body2" color="text.secondary">
@@ -301,7 +313,6 @@ export default function MealOptimizerView({
                 </CardContent>
               </Card>
 
-              {/* DETAILS */}
               <Card
                 sx={{
                   borderRadius: 4,

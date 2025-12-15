@@ -22,16 +22,8 @@ export default function MealOptimizerPage() {
   });
 
   const [ingredientInput, setIngredientInput] = useState("");
-  const [ingredients, setIngredients] = useState([
-    "chicken",
-    "rice",
-    "broccoli",
-  ]);
-
-  // ✅ this will store the OpenAI plan shape: { summary, estimated_total_calories, meals: [...] }
+  const [ingredients, setIngredients] = useState(["chicken", "rice", "broccoli"]);
   const [plan, setPlan] = useState(null);
-
-  // ✅ show route validation errors nicely
   const [apiErrors, setApiErrors] = useState([]);
 
   const goal = watch("goal");
@@ -51,7 +43,38 @@ export default function MealOptimizerPage() {
     setIngredients((prev) => prev.filter((i) => i !== name));
   };
 
-  // ✅ Calls the OpenAI route: /api/openai/meal
+  const buildNutritionSnapshot = (p) => {
+    const meals = Array.isArray(p?.meals) ? p.meals : [];
+
+    const sum = (k) =>
+      meals.reduce((acc, m) => acc + (Number(m?.[k]) || 0), 0);
+
+    const calories = Number(p?.estimated_total_calories) || sum("calories");
+    const protein = sum("protein_g");
+    const carbs = sum("carbs_g");
+    const fats = sum("fats_g");
+
+    return {
+      calories: { current: calories, target: calories },
+      protein: { current: protein, target: protein },
+      carbs: { current: carbs, target: carbs },
+      fats: { current: fats, target: fats },
+      source: "meal-optimizer",
+      savedAt: Date.now(),
+    };
+  };
+
+  const saveToDashboard = () => {
+    if (!plan) return;
+    const snapshot = buildNutritionSnapshot(plan);
+    localStorage.setItem("fitflux_todayNutrition", JSON.stringify(snapshot));
+    localStorage.setItem("fitflux_plan", JSON.stringify(plan));
+    localStorage.setItem(
+      "fitflux_calorieTarget",
+      String(snapshot?.calories?.target ?? 0)
+    );
+  };
+
   const onSubmit = async (data) => {
     setPlan(null);
     setApiErrors([]);
@@ -61,25 +84,23 @@ export default function MealOptimizerPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // ✅ match your openai/meal/route.js expected keys
           weightLbs: data.weight,
           age: data.age,
           heightCm: data.height,
           gender: data.gender,
           prepTimeMinutes: data.prepTime,
           ingredients,
+          goal,
         }),
       });
 
       const json = await res.json();
 
-      // your OpenAI route returns { errors } on 400
       if (!res.ok) {
         setApiErrors(json?.errors || [json?.error || "Request failed"]);
         return;
       }
 
-      // your OpenAI route returns { plan }
       setPlan(json.plan);
     } catch (err) {
       console.error("Request failed:", err);
@@ -101,6 +122,7 @@ export default function MealOptimizerPage() {
       ingredients={ingredients}
       plan={plan}
       apiErrors={apiErrors}
+      onSave={saveToDashboard}
     />
   );
 }

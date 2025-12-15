@@ -13,6 +13,8 @@ import {
   Button,
   Stack,
   Paper,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -26,6 +28,8 @@ export default function WorkoutTracker() {
   const [loading, setLoading] = useState(true);
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [savingWorkout, setSavingWorkout] = useState(false);
+  const [saveSnackOpen, setSaveSnackOpen] = useState(false);
+  const [saveSnackMsg, setSaveSnackMsg] = useState("");
 
   const muscleGroups = [
     { name: "Chest", color: "#e57373" },
@@ -234,7 +238,8 @@ export default function WorkoutTracker() {
       setWorkoutLog([]);
       setSelectedExercise(null);
 
-      alert(`Workout saved!\nSession ID: ${insertSessionRes.data.id}`);
+      setSaveSnackMsg(`Workout saved! Session ID: ${insertSessionRes.data.id}`);
+      setSaveSnackOpen(true);
     } finally {
       setSavingWorkout(false);
     }
@@ -422,6 +427,22 @@ export default function WorkoutTracker() {
           </Container>
         </Paper>
       )}
+      <Snackbar
+        open={saveSnackOpen}
+        autoHideDuration={3000}
+        onClose={() => setSaveSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSaveSnackOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {saveSnackMsg}
+        </Alert>
+      </Snackbar>
+
       <Footer />
     </Box>
   );

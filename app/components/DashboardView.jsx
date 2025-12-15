@@ -22,6 +22,7 @@ export default function DashboardView({
   todayWorkout,
   todayNutrition,
   insights,
+  workoutLabel = "Week 1",
 }) {
   return (
     <Box sx={{ bgcolor: 'grey.100', minHeight: '100vh' }}>
@@ -34,6 +35,7 @@ export default function DashboardView({
           and what FitFlux is adjusting for you this week.
         </Typography>
 
+        
         <Grid container spacing={3}>
           <Grid item xs={12} md={3}>
             <Card sx={{ borderRadius: 3, height: '100%' }}>
@@ -147,6 +149,7 @@ export default function DashboardView({
           </Grid>
         </Grid>
 
+        
         <Grid container spacing={3} sx={{ mt: 3 }}>
           <Grid item xs={12} md={7}>
             <Card sx={{ borderRadius: 3, height: '100%' }}>
@@ -159,7 +162,7 @@ export default function DashboardView({
                   <Typography variant="h6" fontWeight={600}>
                     Today&apos;s Workout
                   </Typography>
-                  <Chip size="small" label="Lower Body · Week 3" />
+                  <Chip size="small" label={workoutLabel} />
                 </Stack>
 
                 <Divider sx={{ my: 2 }} />
@@ -256,7 +259,7 @@ export default function DashboardView({
                   })}
                 </Stack>
 
-                <Box sx={{ mt: 3 }}>
+                <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
                   <Button
                     fullWidth
                     size="small"
@@ -266,12 +269,16 @@ export default function DashboardView({
                   >
                     Open Meal Optimizer
                   </Button>
+                  <Button fullWidth size="small" variant="outlined">
+                    Generate grocery list
+                  </Button>
                 </Box>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
+        {/* Insights + quick actions */}
         <Grid container spacing={3} sx={{ mt: 3 }}>
           <Grid item xs={12} md={7}>
             <Card sx={{ borderRadius: 3, height: '100%' }}>

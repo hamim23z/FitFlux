@@ -23,6 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import SaveIcon from "@mui/icons-material/Save";
 
 export default function AISuggestions({ open, onClose, muscleGroups }) {
   const [experience, setExperience] = useState("beginner");
@@ -31,6 +32,7 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
   const [selectedMuscles, setSelectedMuscles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [workoutPlan, setWorkoutPlan] = useState(null);
+  const [workoutMeta, setWorkoutMeta] = useState(null);
   const [error, setError] = useState(null);
 
   const handleMuscleToggle = (muscle) => {
@@ -50,6 +52,7 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
     setLoading(true);
     setError(null);
     setWorkoutPlan(null);
+    setWorkoutMeta(null);
 
     try {
       const response = await fetch("/api/openai/workout", {
@@ -71,6 +74,7 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
 
       const data = await response.json();
       setWorkoutPlan(data.plan);
+      setWorkoutMeta(data.meta);
     } catch (err) {
       console.error("Error generating plan:", err);
       setError(err.message);
@@ -79,8 +83,37 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
     }
   };
 
+  const handleSaveToDashboard = () => {
+    if (!workoutPlan || !workoutMeta) return;
+
+    // Save workout plan to localStorage
+    localStorage.setItem("fitflux_workoutPlan", JSON.stringify(workoutPlan));
+    
+    // Save metadata
+    localStorage.setItem("fitflux_workoutMeta", JSON.stringify(workoutMeta));
+
+    // Calculate and save workout stats for dashboard
+    const workoutStats = {
+      totalExercises: workoutMeta.totalExercises,
+      totalSets: workoutMeta.totalSets,
+      muscleGroups: workoutMeta.muscleGroups,
+      goal: workoutMeta.goal,
+      experience: workoutMeta.experience,
+      lastGenerated: workoutMeta.generatedAt,
+    };
+    
+    localStorage.setItem("fitflux_workoutStats", JSON.stringify(workoutStats));
+
+    // Increment workouts completed
+    const currentCompleted = parseInt(localStorage.getItem("fitflux_workoutsCompleted") || "0");
+    localStorage.setItem("fitflux_workoutsCompleted", String(currentCompleted + 1));
+
+    alert("Workout plan saved to dashboard!");
+  };
+
   const handleClose = () => {
     setWorkoutPlan(null);
+    setWorkoutMeta(null);
     setError(null);
     onClose();
   };
@@ -269,14 +302,27 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
               ))}
             </Stack>
 
-            <Button
-              variant="outlined"
-              fullWidth
-              sx={{ mt: 3 }}
-              onClick={() => setWorkoutPlan(null)}
-            >
-              Generate New Plan
-            </Button>
+            <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<SaveIcon />}
+                onClick={handleSaveToDashboard}
+                sx={{ fontWeight: "bold" }}
+              >
+                Save to Dashboard
+              </Button>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={() => {
+                  setWorkoutPlan(null);
+                  setWorkoutMeta(null);
+                }}
+              >
+                Generate New Plan
+              </Button>
+            </Stack>
           </Box>
         )}
       </DialogContent>

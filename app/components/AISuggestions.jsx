@@ -108,7 +108,7 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <AutoAwesomeIcon color="primary" />
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center" }}>
             AI Workout Suggestions
           </Typography>
         </Box>
@@ -214,7 +214,7 @@ export default function AISuggestions({ open, onClose, muscleGroups }) {
           </Box>
         ) : (
           <Box>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
               {workoutPlan.overview}
             </Typography>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Footer from "../components/footer";
+import Footer from "../components/Footer";
 import {
   Box,
   Container,

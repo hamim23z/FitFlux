@@ -1,14 +1,15 @@
-import './globals.css';
-import MuiThemeProvider from './MuiThemeProvider';
-import Providers from './providers';
-import Navbar from './components/navbar';
-import { Inter } from 'next/font/google';
+import "./globals.css";
+import MuiThemeProvider from "./MuiThemeProvider";
+import Providers from "./providers";
+import Navbar from "./components/navbar";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'FitFlux',
-  description: 'Personalized fitness platform',
+  title: "FitFlux - Optimize Your Fitness Journey",
+  description:
+    "Your very own personalized fitness platform. Tailor it your way to ensure you train smarter. Workouts, meal prep, and plenty more available. ",
 };
 
 export default function RootLayout({ children }) {

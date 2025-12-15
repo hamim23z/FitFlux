@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Footer from "../components/footer";
+import Footer from "../components/Footer";
 import DashboardView from "../components/DashboardView";
 
 const DEFAULT_SUMMARY = {

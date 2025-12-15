@@ -193,11 +193,7 @@ export default function MealOptimizerView({
                       }
                     }}
                   />
-                  <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={addIngredient}
-                  >
+                  <Button variant="contained" startIcon={<AddIcon />} onClick={addIngredient}>
                     Add
                   </Button>
                 </Stack>

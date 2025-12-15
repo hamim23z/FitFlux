@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { supabase } from "../../lib/supabaseClient";
 import Footer from "../components/Footer";
 import ExerciseList from "../components/ExerciseList";
 import ExerciseDetails from "../components/ExerciseDetails";
+import AISuggestions from "../components/AISuggestions";
 import {
   Box,
   Container,
@@ -11,15 +13,23 @@ import {
   Button,
   Stack,
   Paper,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 export default function WorkoutTracker() {
+  const { data: session, status } = useSession();
   const [selectedMuscle, setSelectedMuscle] = useState("");
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [workoutLog, setWorkoutLog] = useState([]);
   const [exercises, setExercises] = useState({});
   const [loading, setLoading] = useState(true);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [savingWorkout, setSavingWorkout] = useState(false);
+  const [saveSnackOpen, setSaveSnackOpen] = useState(false);
+  const [saveSnackMsg, setSaveSnackMsg] = useState("");
 
   const muscleGroups = [
     { name: "Chest", color: "#e57373" },
@@ -27,6 +37,7 @@ export default function WorkoutTracker() {
     { name: "Shoulders", color: "#81c784" },
     { name: "Arms", color: "#ffb74d" },
     { name: "Legs", color: "#ba68c8" },
+    { name: "Core", color: "#4db6ac" },
     { name: "Hips", color: "#2042a1ff" },
   ];
 
@@ -37,7 +48,7 @@ export default function WorkoutTracker() {
         .from("exercise_catalog")
         .select("*");
       if (error) {
-        console.error("Error:", error);
+        console.error("Error loading exercise_catalog:", error);
         setLoading(false);
         return;
       }
@@ -119,6 +130,121 @@ export default function WorkoutTracker() {
     0
   );
 
+  const finishWorkout = async () => {
+    if (savingWorkout) return;
+    if (status === "loading") return;
+    if (status !== "authenticated") {
+      alert("Please sign in first.");
+      return;
+    }
+    if (workoutLog.length === 0) {
+      alert("Add at least one set before finishing.");
+      return;
+    }
+    setSavingWorkout(true);
+
+    try {
+      const email = session?.user?.email ?? null;
+      const name = session?.user?.name ?? null;
+      const image = session?.user?.image ?? null;
+      const providerAccountId = session?.user?.id?.toString?.() ?? null;
+
+      if (!email) {
+        alert("Signed-in user has no email. Cannot continue.");
+        return;
+      }
+      let userUuid = null;
+      const findRes = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (findRes.error) {
+        console.error("Find user error:", {
+          message: findRes.error.message,
+          code: findRes.error.code,
+          details: findRes.error.details,
+          hint: findRes.error.hint,
+        });
+        alert(`Failed finding user: ${findRes.error.message}`);
+        return;
+      }
+
+      if (findRes.data?.id) {
+        userUuid = findRes.data.id;
+      } else {
+        const insertUserRes = await supabase
+          .from("users")
+          .insert([
+            {
+              provider: "nextauth",
+              provider_account_id: providerAccountId,
+              email,
+              name,
+              image,
+            },
+          ])
+          .select("id")
+          .single();
+
+        if (insertUserRes.error) {
+          console.error("Insert user error:", {
+            message: insertUserRes.error.message,
+            code: insertUserRes.error.code,
+            details: insertUserRes.error.details,
+            hint: insertUserRes.error.hint,
+          });
+          alert(`Failed creating user: ${insertUserRes.error.message}`);
+          return;
+        }
+
+        userUuid = insertUserRes.data.id;
+      }
+      const verifyRes = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", userUuid)
+        .single();
+
+      if (verifyRes.error) {
+        console.error("Verify user error:", {
+          message: verifyRes.error.message,
+          code: verifyRes.error.code,
+          details: verifyRes.error.details,
+          hint: verifyRes.error.hint,
+        });
+        alert("User record could not be verified in users table.");
+        return;
+      }
+      const session_date = new Date().toISOString().slice(0, 10);
+      const insertSessionRes = await supabase
+        .from("workout_sessions")
+        .insert([{ user_id: userUuid, session_date }])
+        .select("*")
+        .single();
+
+      if (insertSessionRes.error) {
+        const e = insertSessionRes.error;
+        console.error("Workout session insert error:", {
+          message: e.message,
+          code: e.code,
+          details: e.details,
+          hint: e.hint,
+        });
+        alert(`Failed to save workout session:\n${e.message}`);
+        return;
+      }
+      setWorkoutLog([]);
+      setSelectedExercise(null);
+
+      setSaveSnackMsg(`Workout saved! Session ID: ${insertSessionRes.data.id}`);
+      setSaveSnackOpen(true);
+    } finally {
+      setSavingWorkout(false);
+    }
+  };
+
   return (
     <Box>
       <Container
@@ -135,18 +261,35 @@ export default function WorkoutTracker() {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              md: "220px 1fr 380px",
-            },
+            gridTemplateColumns: { xs: "1fr", md: "220px 1fr 380px" },
             gap: 3,
           }}
         >
-          {/* Muscle Groups Sidebar */}
           <Paper sx={{ p: 2, borderRadius: 3, position: "sticky", top: 20 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
               Muscle Groups
             </Typography>
+
+            {/* AI Suggestions Button */}
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<AutoAwesomeIcon />}
+              onClick={() => setAiDialogOpen(true)}
+              sx={{
+                mb: 2,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                textTransform: "none",
+                fontWeight: "bold",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                },
+              }}
+            >
+              AI Suggestions
+            </Button>
+
             <Stack spacing={1}>
               {muscleGroups.map((muscle) => (
                 <Button
@@ -203,6 +346,12 @@ export default function WorkoutTracker() {
           />
         </Box>
       </Container>
+
+      <AISuggestions
+        open={aiDialogOpen}
+        onClose={() => setAiDialogOpen(false)}
+        muscleGroups={muscleGroups.map((m) => m.name)}
+      />
 
       {/* Workout Summary Bar */}
       {workoutLog.length > 0 && (
@@ -269,14 +418,31 @@ export default function WorkoutTracker() {
                 color="success"
                 size="large"
                 startIcon={<CheckCircleIcon />}
-                onClick={() => alert("Workout saved! (Connect to backend)")}
+                disabled={savingWorkout}
+                onClick={finishWorkout}
               >
-                Finish Workout
+                {savingWorkout ? "Saving..." : "Finish Workout"}
               </Button>
             </Stack>
           </Container>
         </Paper>
       )}
+      <Snackbar
+        open={saveSnackOpen}
+        autoHideDuration={3000}
+        onClose={() => setSaveSnackOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSaveSnackOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {saveSnackMsg}
+        </Alert>
+      </Snackbar>
+
       <Footer />
     </Box>
   );

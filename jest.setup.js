@@ -1,3 +1,4 @@
+// QA Sprint 4: confirm Jest setup file is tracked correctly
 import '@testing-library/jest-dom';
 
 

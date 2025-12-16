@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "../../lib/supabaseClient";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import ExerciseList from "../components/ExerciseList";
 import ExerciseDetails from "../components/ExerciseDetails";
 import AISuggestions from "../components/AISuggestions";

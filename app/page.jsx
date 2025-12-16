@@ -209,7 +209,7 @@ export default function LandingPage() {
                 variant="contained"
                 size="large"
                 component={Link}
-                href="/sign-up"
+                href="/sign-in"
                 sx={{
                   bgcolor: "white",
                   color: "#1565c0",
@@ -318,7 +318,7 @@ export default function LandingPage() {
             variant="contained"
             size="large"
             component={Link}
-            href="/sign-up"
+            href="/sign-in"
             sx={{
               bgcolor: "white",
               color: "#1565c0",
